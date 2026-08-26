@@ -81,23 +81,6 @@ services:
       retries: 10
       interval: 10s
 
-  # ADICIONADO: Redis Commander (opcional - interface visual)
-  redis-commander:
-    image: rediscommander/redis-commander:latest
-    container_name: laravel-redis-commander
-    restart: unless-stopped
-    ports:
-      - "8081:8081"
-    environment:
-      - REDIS_HOSTS=local:redis:6379:${REDIS_PASSWORD:-}
-    depends_on:
-      - redis
-    networks:
-      - laravel-network
-    # Comente esta linha se não quiser o Redis Commander
-    # profiles:
-    #   - tools
-
 volumes:
   mysql-data:
     driver: local
