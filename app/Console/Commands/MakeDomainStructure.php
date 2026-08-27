@@ -487,7 +487,7 @@ PHP;
      */
     private function createDto(string $domain): void
     {
-        $path = "app/Application/{$domain}/DTOs/{$domain}Data.php";
+        $path = "app/Application/{$domain}/DTOs/Create{$domain}Data.php";
         
         if (File::exists($path)) {
             return;
@@ -500,7 +500,7 @@ namespace App\\Application\\{$domain}\\DTOs;
 
 use Illuminate\\Http\\Request;
 
-class {$domain}Data
+class Create{$domain}Data
 {
     public function __construct(
         public readonly ?int \$id = null,
@@ -536,7 +536,7 @@ class {$domain}Data
 PHP;
 
         File::put($path, $content);
-        $this->line("   DTO criado: {$domain}Data.php");
+        $this->line("   DTO criado: Create{$domain}Data.php");
     }
 
     /**
@@ -1218,28 +1218,39 @@ PHP;
             return;
         }
 
-        $registerLines = [
+        // Adicionar use statements APENAS se não existirem
+        $useLines = [
             "use App\\Domain\\{$domain}\\Repositories\\{$domain}RepositoryInterface;",
             "use App\\Infrastructure\\{$domain}\\Repositories\\Eloquent{$domain}Repository;",
         ];
 
-        $content = str_replace(
-            'use Illuminate\\Support\\ServiceProvider;',
-            "use Illuminate\\Support\\ServiceProvider;\n" . implode("\n", $registerLines),
-            $content
-        );
+        foreach ($useLines as $useLine) {
+            if (!str_contains($content, $useLine)) {
+                // Adicionar após o último use existente
+                $pattern = '/(use [^;]+;)/';
+                $content = preg_replace($pattern, "$1\n" . $useLine, $content, 1);
+            }
+        }
 
-        // Adicionar bind no register
+        // Adicionar o bind no método register()
         $bind = "\n        \$this->app->bind(\n            {$domain}RepositoryInterface::class,\n            Eloquent{$domain}Repository::class\n        );";
 
-        $content = str_replace(
-            'public function register(): void',
-            "public function register(): void\n    {\n{$bind}\n    }",
-            $content
-        );
-
-        File::put($path, $content);
-        $this->line("   Registrado no AppServiceProvider");
+        // Procurar o método register() e adicionar o bind
+        $pattern = '/public function register\(\): void\s*\{([^}]*)\}/s';
+        
+        if (preg_match($pattern, $content, $matches)) {
+            $currentContent = $matches[1];
+            
+            // Adicionar o bind no final do método
+            $newContent = str_replace(
+                $matches[0],
+                "public function register(): void\n    {\n        {$currentContent}\n        {$bind}\n    }",
+                $content
+            );
+            
+            File::put($path, $newContent);
+            $this->line("   ✅ Registrado no AppServiceProvider: {$domain}");
+        }
     }
 
     /**
