@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('phone');
             $table->text('description')->nullable();
-            $table->enum('status', ['pending', 'approved', 'rejected', 'blocked'])->default('pending');
+            $table->enum('status', ['pending', 'active', 'inactive', 'blocked'])->default('pending');
             $table->decimal('rating', 3, 2)->default(0);
             $table->timestamp('approved_at')->nullable();
             $table->timestamps();

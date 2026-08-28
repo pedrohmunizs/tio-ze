@@ -15,7 +15,7 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
     // Rotas do User
     Route::apiResource('users', UserController::class);
 
-    Route::post('/v1/register', [AuthController::class, 'register']);
+    Route::post('/register', [AuthController::class, 'register']);
 
     Route::group(['prefix' => 'children', 'namespace' => 'App\Http\Controllers\Api\V1\Child'], function(){
         Route::get('/',['uses' => 'ChildController@index', 'as' => 'children.index'] );
@@ -50,5 +50,15 @@ Route::prefix('v1')->group(function () {
         Route::post('/schools', 'store');
         Route::put('/schools/{id}', 'update');
         Route::delete('/schools/{id}', 'destroy');
+    });
+});
+// Provider Routes
+Route::prefix('v1')->group(function () {
+    Route::controller(App\Http\Controllers\Api\V1\Provider\ProviderController::class)->group(function () {
+        Route::get('/providers', 'index');
+        Route::get('/providers/{id}', 'show');
+        Route::post('/providers', 'store');
+        Route::put('/providers/{id}', 'update');
+        Route::delete('/providers/{id}', 'destroy');
     });
 });

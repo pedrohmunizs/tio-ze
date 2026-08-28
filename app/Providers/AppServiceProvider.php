@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Domain\Address\Repositories\AddressRepositoryInterface;
+use App\Infrastructure\Provider\Repositories\EloquentProviderRepository;
+use App\Domain\Provider\Repositories\ProviderRepositoryInterface;
 use App\Infrastructure\School\Repositories\EloquentSchoolRepository;
 use App\Domain\School\Repositories\SchoolRepositoryInterface;
 use App\Infrastructure\Child\Repositories\EloquentChildRepository;
@@ -20,6 +22,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        
         
 
         $this->app->bind(
@@ -41,6 +44,12 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             SchoolRepositoryInterface::class,
             EloquentSchoolRepository::class
+        );
+    
+        
+        $this->app->bind(
+            ProviderRepositoryInterface::class,
+            EloquentProviderRepository::class
         );
     }
 

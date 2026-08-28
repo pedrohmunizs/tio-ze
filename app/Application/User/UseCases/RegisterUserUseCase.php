@@ -2,6 +2,8 @@
 
 namespace App\Application\User\UseCases;
 
+use App\Application\Provider\DTOs\CreateProviderData;
+use App\Application\Provider\UseCases\CreateProviderUseCase;
 use App\Application\User\DTOs\CreateUserData;
 use App\Domain\User\Entities\User;
 use App\Domain\User\ValueObjects\Email;
@@ -17,6 +19,7 @@ class RegisterUserUseCase
     public function __construct(
         private UserRepositoryInterface $repository,
         private AddressRepositoryInterface $addressRepository,
+        private CreateProviderUseCase $createProviderUseCase,
     ) {}
 
     public function execute(CreateUserData $data): User
@@ -45,6 +48,31 @@ class RegisterUserUseCase
 
         // 4. Persistir
         $this->repository->save($user);
+
+        switch ($data->role) {
+            case 'provider':
+                $provider_dto = new CreateProviderData(
+                    name: $data->name,
+                    phone: $data->phone,
+                    zip_code: $data->zip_code,
+                    street: $data->street,
+                    number: $data->number,
+                    complement: $data->complement,
+                    neighborhood: $data->neighborhood,
+                    city: $data->city,
+                    state: $data->state,
+                    fk_user: $user->getId(),
+                );
+
+                $this->createProviderUseCase->execute($provider_dto);
+                break;
+            case 'driver':
+                # code...
+                break;
+            default:
+                # code...
+                break;
+        }
 
         $this->assignRoleToUser($user, $data->role ?? 'parent');
 
@@ -75,18 +103,15 @@ class RegisterUserUseCase
 
     private function assignRoleToUser(User $user, string $roleName): void
     {
-        // Buscar o modelo do usuário para atribuir a role
         $userModel = UserModel::find($user->getId());
         
         if (!$userModel) {
             throw new \RuntimeException('User not found after registration');
         }
 
-        // Verificar se a role existe
         $role = Role::where('name', $roleName)->where('guard_name', 'web')->first();
         
         if (!$role) {
-            // Se a role não existir, atribuir 'parent' como padrão
             $role = Role::where('name', 'parent')->where('guard_name', 'web')->first();
         }
 
