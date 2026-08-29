@@ -2,6 +2,8 @@
 
 namespace App\Application\User\UseCases;
 
+use App\Application\Driver\DTOs\CreateDriverData;
+use App\Application\Driver\UseCases\CreateDriverUseCase;
 use App\Application\Provider\DTOs\CreateProviderData;
 use App\Application\Provider\UseCases\CreateProviderUseCase;
 use App\Application\User\DTOs\CreateUserData;
@@ -20,6 +22,7 @@ class RegisterUserUseCase
         private UserRepositoryInterface $repository,
         private AddressRepositoryInterface $addressRepository,
         private CreateProviderUseCase $createProviderUseCase,
+        private CreateDriverUseCase $createDriverUseCase,
     ) {}
 
     public function execute(CreateUserData $data): User
@@ -67,7 +70,37 @@ class RegisterUserUseCase
                 $this->createProviderUseCase->execute($provider_dto);
                 break;
             case 'driver':
-                # code...
+                $provider_dto = new CreateProviderData(
+                    name: $data->name,
+                    phone: $data->phone,
+                    zip_code: $data->zip_code,
+                    street: $data->street,
+                    number: $data->number,
+                    complement: $data->complement,
+                    neighborhood: $data->neighborhood,
+                    city: $data->city,
+                    state: $data->state,
+                    fk_user: $user->getId(),
+                    is_autonomous: true,
+                );
+
+                $provider = $this->createProviderUseCase->execute($provider_dto);
+
+                $driver_dto = new CreateDriverData(
+                    zip_code: $data->zip_code,
+                    street: $data->street,
+                    number: $data->number,
+                    neighborhood: $data->neighborhood,
+                    city: $data->city,
+                    state: $data->state,
+                    fk_user: $user->getId(),
+                    fk_provider: $provider->getId(),
+                    is_autonomous: true,
+                    complement: $data->complement,
+                );
+
+                $driver = $this->createDriverUseCase->execute($driver_dto);
+
                 break;
             default:
                 # code...

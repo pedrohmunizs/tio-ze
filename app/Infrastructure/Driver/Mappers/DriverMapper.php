@@ -1,29 +1,31 @@
 <?php
 
-namespace App\Infrastructure\Provider\Mappers;
+namespace App\Infrastructure\Driver\Mappers;
 
-use App\Domain\Provider\Entities\Provider;
-use App\Domain\Provider\Enums\ProviderStatus;
-use App\Infrastructure\Provider\Models\ProviderModel;
+use App\Domain\Driver\Entities\Driver;
+use App\Domain\Driver\Enums\DriverStatus;
+use App\Infrastructure\Driver\Models\DriverModel;
 use DateTimeImmutable;
 
-class ProviderMapper
+class DriverMapper
 {
-    public static function toDomain(ProviderModel $model): Provider
+    public static function toDomain(DriverModel $model): Driver
     {
-        $entity = new Provider(
-            name: $model->name,
-            phone: $model->phone,
+        $entity = new Driver(
             userId: $model->fk_user,
-            addressId: $model->fk_address,
+            providerId: $model->fk_provider,
             isAutonomous: $model->is_autonomous,
+            status: $model->status,
+            licenseNumber: $model->license_number,
+            licenseCategory: $model->license_category,
+            licenseValidUntil: $model->license_valid_until,
             id: $model->id
         );
 
         $reflection = new \ReflectionClass($entity);
         $statusProperty = $reflection->getProperty('status');
         $statusProperty->setAccessible(true);
-        $statusProperty->setValue($entity, ProviderStatus::from($model->status));
+        $statusProperty->setValue($entity, DriverStatus::from($model->status));
 
         // Atualizar timestamps
         if ($model->created_at) {
@@ -47,21 +49,20 @@ class ProviderMapper
         return $entity;
     }
 
-    public static function toArray(Provider $entity): array
+    public static function toArray(Driver $entity): array
     {
         return [
-            'name' => $entity->getName(),
-            'phone' => $entity->getPhone(),
-            'description' => $entity->getDescription(),
-            'is_autonomous' => $entity->getIsAutonomous(),
-            'rating' => $entity->getRating(),
+            'license_number' => $entity->getLicenseNumber(),
+            'license_category' => $entity->getLicenseCategory(),
+            'license_valid_until' => $entity->getLicenseValidUntil(),
             'status' => $entity->getStatus()->value,
-            'fk_address' => $entity->getAddressId(),
+            'is_autonomous' => $entity->getIsAutonomous(),
+            'fk_provider' => $entity->getProviderId(),
             'fk_user' => $entity->getUserId(),
         ];
     }
 
-    public static function toModel(Provider $entity): array
+    public static function toModel(Driver $entity): array
     {
         return self::toArray($entity);
     }

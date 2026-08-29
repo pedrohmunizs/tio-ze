@@ -435,27 +435,40 @@ PHP;
 namespace App\\Infrastructure\\{$domain}\\Mappers;
 
 use App\\Domain\\{$domain}\\Entities\\{$domain};
+use App\Domain\{$domain}\Enums\{$domain}Status;
 use App\\Infrastructure\\{$domain}\\Models\\{$domain}Model;
+use DateTimeImmutable;
 
 class {$domain}Mapper
 {
     public static function toDomain({$domain}Model \$model): {$domain}
     {
-        \$data = [
-            // Mapeie os campos do model para a entity
-            // Exemplo: 'name' => \$model->name,
-        ];
+        \$entity = new {$domain}(
+            \$model->id
+        );
 
-        \$entity = new {$domain}(\$data, \$model->id);
+        \$reflection = new \ReflectionClass(\$entity);
+        \$statusProperty = \$reflection->getProperty('status');
+        \$statusProperty->setAccessible(true);
+        $\statusProperty->setValue($\entity, DriverStatus::from($\model->status));
 
+        // Atualizar timestamps
         if (\$model->created_at) {
-            \$entity->setCreatedAt(\$model->created_at);
+            \$createdAtProperty = \$reflection->getProperty('createdAt');
+            \$createdAtProperty->setAccessible(true);
+            \$createdAtProperty->setValue(\$entity, new DateTimeImmutable(\$model->created_at));
         }
+
         if (\$model->updated_at) {
-            \$entity->setUpdatedAt(\$model->updated_at);
+            \$updatedAtProperty = \$reflection->getProperty('updatedAt');
+            \$updatedAtProperty->setAccessible(true);
+            \$updatedAtProperty->setValue(\$entity, new DateTimeImmutable(\$model->updated_at));
         }
+
         if (\$model->deleted_at) {
-            \$entity->setDeletedAt(\$model->deleted_at);
+            \$deletedAtProperty = \$reflection->getProperty('deletedAt');
+            \$deletedAtProperty->setAccessible(true);
+            \$deletedAtProperty->setValue(\$entity, new DateTimeImmutable(\$model->deleted_at));
         }
 
         return \$entity;
@@ -463,12 +476,7 @@ class {$domain}Mapper
 
     public static function toArray({$domain} \$entity): array
     {
-        \$data = \$entity->getData();
-        
-        // Mapeie os dados da entity para o array
-        // Exemplo: 'name' => \$data['name'] ?? null,
-
-        return \$data;
+        return [];
     }
 
     public static function toModel({$domain} \$entity): array
@@ -556,7 +564,7 @@ namespace App\\Application\\{$domain}\\UseCases;
 
 use App\\Domain\\{$domain}\\Entities\\{$domain};
 use App\\Domain\\{$domain}\\Repositories\\{$domain}RepositoryInterface;
-use App\\Application\\{$domain}\\DTOs\\{$domain}Data;
+use App\\Application\\{$domain}\\DTOs\\Create{$domain}Data;
 
 class Create{$domain}UseCase
 {
@@ -564,7 +572,7 @@ class Create{$domain}UseCase
         private {$domain}RepositoryInterface \$repository
     ) {}
 
-    public function execute({$domain}Data \$data): {$domain}
+    public function execute(Create{$domain}Data \$data): {$domain}
     {
         \$entity = new {$domain}(\$data->toArray());
         \$this->repository->save(\$entity);

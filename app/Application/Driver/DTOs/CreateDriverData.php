@@ -1,14 +1,12 @@
 <?php
 
-namespace App\Application\Provider\DTOs;
+namespace App\Application\Driver\DTOs;
 
 use Illuminate\Http\Request;
 
-class CreateProviderData
+class CreateDriverData
 {
     public function __construct(
-        public readonly string $name,
-        public readonly string $phone,
         public readonly string $zip_code,
         public readonly string $street,
         public readonly string $number,
@@ -16,6 +14,7 @@ class CreateProviderData
         public readonly string $city,
         public readonly string $state,
         public readonly int $fk_user,
+        public readonly int $fk_provider,
         public readonly ?bool $is_autonomous = false,
         public readonly ?string $complement = null,
         public readonly ?float $latitude = null,
@@ -25,8 +24,6 @@ class CreateProviderData
     public static function fromRequest(Request $request): self
     {
         return new self(
-            name: $request->input('name'),
-            phone: $request->input('phone'),
             is_autonomous: $request->input('is_autonomous'),
             zip_code: $request->input('zip_code'),
             street: $request->input('street'),
@@ -38,6 +35,7 @@ class CreateProviderData
             latitude: $request->input('latitude') ? (float) $request->input('latitude') : null,
             longitude: $request->input('longitude') ? (float) $request->input('longitude') : null,
             fk_user: $request->input('fk_user'),
+            fk_provider: $request->input('fk_provider'),
         );
     }
 
@@ -49,8 +47,6 @@ class CreateProviderData
     public function validate(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:20',
             'zip_code' => 'nullable|string|max:10',
             'street' => 'nullable|string|max:255',
             'number' => 'nullable|string|max:20',
@@ -61,6 +57,7 @@ class CreateProviderData
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
             'fk_user' => 'required|numeric',
+            'fk_provider' => 'required|numeric',
             'is_autonomous' => 'nullable|bool',
         ];
     }

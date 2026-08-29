@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('fk_user')->constrained('users')->onDelete('cascade')->unique();
             $table->foreignId('fk_provider')->constrained('providers')->onDelete('cascade');
-            $table->string('license_number');
-            $table->string('license_category');
-            $table->date('license_valid_until');
-            $table->enum('status', ['active', 'inactive', 'suspended'])->default('active');
+            $table->string('license_number')->nullable();
+            $table->string('license_category')->nullable();
+            $table->date('license_valid_until')->nullable();
+            $table->enum('status', ['active', 'inactive', 'suspended', 'pending'])->default('active');
             $table->timestamps();
         });
     }

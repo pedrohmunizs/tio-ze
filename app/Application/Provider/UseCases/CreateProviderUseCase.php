@@ -24,6 +24,7 @@ class CreateProviderUseCase
             phone: $data->phone,
             userId: $data->fk_user,
             addressId: $fk_address,
+            isAutonomous: $data->is_autonomous
         );
 
         $this->repository->save($entity);
