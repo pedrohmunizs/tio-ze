@@ -16,9 +16,10 @@ return new class extends Migration
             $table->foreignId('fk_school')->constrained('schools')->onDelete('cascade');
             $table->foreignId('fk_provider')->constrained('providers')->onDelete('cascade');
             $table->string('name');
-            $table->time('start_time');
+            $table->decimal('price', 10, 2);
+            $table->time('going_time');
+            $table->time('returning_time');
             $table->string('days_of_week');
-            $table->enum('type', ['GOING', 'RETURNING'])->default('GOING');
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps();
             $table->softDeletes();

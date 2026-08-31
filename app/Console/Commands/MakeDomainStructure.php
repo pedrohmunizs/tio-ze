@@ -133,14 +133,12 @@ use DateTimeImmutable;
 class {$domain}
 {
     private ?int \$id;
-    private array \$data;
     private ?DateTimeImmutable \$createdAt;
     private ?DateTimeImmutable \$updatedAt;
     private ?DateTimeImmutable \$deletedAt;
 
-    public function __construct(array \$data = [], ?int \$id = null)
+    public function __construct(?int \$id = null)
     {
-        \$this->data = \$data;
         \$this->id = \$id;
         \$this->createdAt = new DateTimeImmutable();
     }
@@ -153,17 +151,6 @@ class {$domain}
     public function setId(int \$id): self
     {
         \$this->id = \$id;
-        return \$this;
-    }
-
-    public function getData(): array
-    {
-        return \$this->data;
-    }
-
-    public function setData(array \$data): self
-    {
-        \$this->data = \$data;
         return \$this;
     }
 
@@ -196,15 +183,7 @@ class {$domain}
 
     public function toArray(): array
     {
-        return array_merge(
-            ['id' => \$this->id],
-            \$this->data,
-            [
-                'created_at' => \$this->createdAt?->format('Y-m-d H:i:s'),
-                'updated_at' => \$this->updatedAt?->format('Y-m-d H:i:s'),
-                'deleted_at' => \$this->deletedAt?->format('Y-m-d H:i:s'),
-            ]
-        );
+        return [];
     }
 }
 PHP;
@@ -435,7 +414,7 @@ PHP;
 namespace App\\Infrastructure\\{$domain}\\Mappers;
 
 use App\\Domain\\{$domain}\\Entities\\{$domain};
-use App\Domain\{$domain}\Enums\{$domain}Status;
+use App\Domain\\{$domain}\Enums\\{$domain}Status;
 use App\\Infrastructure\\{$domain}\\Models\\{$domain}Model;
 use DateTimeImmutable;
 
@@ -450,7 +429,7 @@ class {$domain}Mapper
         \$reflection = new \ReflectionClass(\$entity);
         \$statusProperty = \$reflection->getProperty('status');
         \$statusProperty->setAccessible(true);
-        $\statusProperty->setValue($\entity, DriverStatus::from($\model->status));
+        \$statusProperty->setValue(\$entity, {$domain}Status::from(\$model->status));
 
         // Atualizar timestamps
         if (\$model->created_at) {
@@ -703,7 +682,7 @@ use App\\Application\\{$domain}\\UseCases\\Create{$domain}UseCase;
 use App\\Application\\{$domain}\\UseCases\\Update{$domain}UseCase;
 use App\\Application\\{$domain}\\UseCases\\Delete{$domain}UseCase;
 use App\\Application\\{$domain}\\UseCases\\Get{$domain}UseCase;
-use App\\Application\\{$domain}\\DTOs\\{$domain}Data;
+use App\\Application\\{$domain}\\DTOs\\Create{$domain}Data;
 use Illuminate\\Http\\JsonResponse;
 use Illuminate\\Http\\Request;
 
@@ -740,23 +719,23 @@ class {$domain}Controller extends Controller
 
     public function store(Request \$request): JsonResponse
     {
-        \$data = {$domain}Data::fromRequest(\$request);
+        \$data = Create{$domain}Data::fromRequest(\$request);
         \$entity = \$this->createUseCase->execute(\$data);
 
         return response()->json(\$entity->toArray(), 201);
     }
 
-    public function update(Request \$request, int \$id): JsonResponse
-    {
-        \$data = {$domain}Data::fromRequest(\$request);
+    // public function update(Request \$request, int \$id): JsonResponse
+    // {
+    //     \$data = {$domain}Data::fromRequest(\$request);
         
-        try {
-            \$entity = \$this->updateUseCase->execute(\$id, \$data);
-            return response()->json(\$entity->toArray());
-        } catch (\\RuntimeException \$e) {
-            return response()->json(['message' => \$e->getMessage()], 404);
-        }
-    }
+    //     try {
+    //         \$entity = \$this->updateUseCase->execute(\$id, \$data);
+    //         return response()->json(\$entity->toArray());
+    //     } catch (\\RuntimeException \$e) {
+    //         return response()->json(['message' => \$e->getMessage()], 404);
+    //     }
+    // }
 
     public function destroy(int \$id): JsonResponse
     {

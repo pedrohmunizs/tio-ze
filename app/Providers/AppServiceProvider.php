@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Domain\Address\Repositories\AddressRepositoryInterface;
+use App\Infrastructure\Route\Repositories\EloquentRouteRepository;
+use App\Domain\Route\Repositories\RouteRepositoryInterface;
 use App\Infrastructure\Driver\Repositories\EloquentDriverRepository;
 use App\Domain\Driver\Repositories\DriverRepositoryInterface;
 use App\Infrastructure\Provider\Repositories\EloquentProviderRepository;
@@ -24,6 +26,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        
         
         
         
@@ -59,6 +62,12 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             DriverRepositoryInterface::class,
             EloquentDriverRepository::class
+        );
+    
+        
+        $this->app->bind(
+            RouteRepositoryInterface::class,
+            EloquentRouteRepository::class
         );
     }
 

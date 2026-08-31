@@ -72,3 +72,13 @@ Route::prefix('v1')->group(function () {
         Route::delete('/drivers/{id}', 'destroy');
     });
 });
+// Route Routes
+Route::prefix('v1')->group(function () {
+    Route::controller(App\Http\Controllers\Api\V1\Route\RouteController::class)->group(function () {
+        Route::get('/routes', 'index');
+        Route::get('/routes/{id}', 'show');
+        Route::post('/routes', 'store');
+        Route::put('/routes/{id}', 'update');
+        Route::delete('/routes/{id}', 'destroy');
+    });
+});
