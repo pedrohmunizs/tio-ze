@@ -366,13 +366,11 @@ class {$domain}Model extends Model
     protected \$table = '{$table}';
 
     protected \$fillable = [
-        // Adicione os campos da tabela aqui
-        // Exemplo: 'name', 'email', 'status'
+        // 'name', 'email', 'status'
     ];
 
     protected \$casts = [
-        // Adicione os casts aqui
-        // Exemplo: 'status' => 'string'
+        // 'status' => 'string'
     ];
 
     protected \$hidden = [

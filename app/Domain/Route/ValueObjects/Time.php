@@ -2,6 +2,8 @@
 
 namespace App\Domain\Route\ValueObjects;
 
+use Carbon\Carbon;
+
 class Time
 {
     private string $value;
@@ -9,13 +11,29 @@ class Time
     public function __construct(string $value)
     {
         $this->validate($value);
-        $this->value = $value;
+        $this->value = $this->normalize($value);
     }
 
     private function validate(string $value): void
     {
-        if (!preg_match('/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/', $value)) {
-            throw new \InvalidArgumentException("Invalid time format: {$value}. Use HH:MM");
+        try {
+            Carbon::createFromFormat('H:i:s', $value);
+        } catch (\Exception $e) {
+            try {
+                Carbon::createFromFormat('H:i', $value);
+            } catch (\Exception $e) {
+                throw new \InvalidArgumentException("Invalid time format: {$value}. Use HH:MM or HH:MM:SS");
+            }
+        }
+    }
+
+    private function normalize(string $value): string
+    {
+        try {
+            $carbon = Carbon::createFromFormat('H:i:s', $value);
+            return $carbon->format('H:i');
+        } catch (\Exception $e) {
+            return $value;
         }
     }
 

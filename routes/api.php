@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\V1\User\UserController;
 
 // Rotas públicas
 Route::post('/v1/login', [AuthController::class, 'login']);
+Route::post('/v1/register', [AuthController::class, 'register']);
+
 
 // Rotas protegidas com Sanctum
 Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
@@ -15,7 +17,7 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
     // Rotas do User
     Route::apiResource('users', UserController::class);
 
-    Route::post('/register', [AuthController::class, 'register']);
+    // Route::post('/register', [AuthController::class, 'register']);
 
     Route::group(['prefix' => 'children', 'namespace' => 'App\Http\Controllers\Api\V1\Child'], function(){
         Route::get('/',['uses' => 'ChildController@index', 'as' => 'children.index'] );
@@ -80,5 +82,15 @@ Route::prefix('v1')->group(function () {
         Route::post('/routes', 'store');
         Route::put('/routes/{id}', 'update');
         Route::delete('/routes/{id}', 'destroy');
+    });
+});
+// TransportRequest Routes
+Route::prefix('v1')->group(function () {
+    Route::controller(App\Http\Controllers\Api\V1\TransportRequest\TransportRequestController::class)->group(function () {
+        Route::get('/transport-requests', 'index');
+        Route::get('/transport-requests/{id}', 'show');
+        Route::post('/transport-requests', 'store');
+        Route::put('/transport-requests/{id}', 'update');
+        Route::delete('/transport-requests/{id}', 'destroy');
     });
 });
