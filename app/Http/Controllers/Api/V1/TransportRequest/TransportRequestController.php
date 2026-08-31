@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Api\V1\TransportRequest;
 
 use App\Http\Controllers\Controller;
 use App\Application\TransportRequest\UseCases\CreateTransportRequestUseCase;
-use App\Application\TransportRequest\UseCases\UpdateTransportRequestUseCase;
 use App\Application\TransportRequest\UseCases\DeleteTransportRequestUseCase;
 use App\Application\TransportRequest\UseCases\GetTransportRequestUseCase;
 use App\Application\TransportRequest\DTOs\CreateTransportRequestData;
+use App\Application\TransportRequest\DTOs\RespondTransportRequestData;
+use App\Application\TransportRequest\UseCases\RespondTransportRequestUseCase;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -15,7 +16,7 @@ class TransportRequestController extends Controller
 {
     public function __construct(
         private CreateTransportRequestUseCase $createUseCase,
-        private UpdateTransportRequestUseCase $updateUseCase,
+        private RespondTransportRequestUseCase $respondUseCase,
         private DeleteTransportRequestUseCase $deleteUseCase,
         private GetTransportRequestUseCase $getUseCase,
     ) {}
@@ -55,17 +56,22 @@ class TransportRequestController extends Controller
         return response()->json($entity->toArray(), 201);
     }
 
-    // public function update(Request $request, int $id): JsonResponse
-    // {
-    //     $data = TransportRequestData::fromRequest($request);
-        
-    //     try {
-    //         $entity = $this->updateUseCase->execute($id, $data);
-    //         return response()->json($entity->toArray());
-    //     } catch (\RuntimeException $e) {
-    //         return response()->json(['message' => $e->getMessage()], 404);
-    //     }
-    // }
+    public function respond(Request $request, int $id): JsonResponse
+    {
+        $validated = $request->validate(
+            RespondTransportRequestData::rules(),
+            RespondTransportRequestData::messages()
+        );
+
+        $data = RespondTransportRequestData::fromRequest($request);
+
+        try {
+            $entity = $this->respondUseCase->execute($id, $data);
+            return response()->json($entity->toArray());
+        } catch (\RuntimeException $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
 
     public function destroy(int $id): JsonResponse
     {

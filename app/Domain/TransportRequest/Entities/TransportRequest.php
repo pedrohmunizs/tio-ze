@@ -55,6 +55,49 @@ class TransportRequest
         return $this;
     }
 
+    public function isPending(): bool
+    {
+        return $this->status === TransportRequestStatus::PENDING;
+    }
+
+    public function isAccepted(): bool
+    {
+        return $this->status === TransportRequestStatus::ACCEPTED;
+    }
+
+    public function isRejected(): bool
+    {
+        return $this->status === TransportRequestStatus::REJECTED;
+    }
+
+    public function isCancelled(): bool
+    {
+        return $this->status === TransportRequestStatus::CANCELLED;
+    }
+
+    public function respond(string $status, ?string $message = null) : self
+    {
+        $this->setStatus($status);
+
+        if ($message) {
+            $this->message = $message;
+        }
+
+        return $this;
+    }
+
+    public function setStatus(string $status): void
+    {
+        $status = TransportRequestStatus::fromString($status);
+
+        if ($this->status === $status) {
+            throw new \DomainException("Transport request is already {$status->value}");
+        }
+
+        $this->status = $status;
+        $this->updatedAt = new DateTimeImmutable();
+    }
+
     public function toArray(): array
     {
         return [

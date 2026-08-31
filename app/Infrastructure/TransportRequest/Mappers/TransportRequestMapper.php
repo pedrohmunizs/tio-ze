@@ -11,12 +11,14 @@ class TransportRequestMapper
 {
     public static function toDomain(TransportRequestModel $model): TransportRequest
     {
+        $status = TransportRequestStatus::tryFrom($model->status) ?? TransportRequestStatus::PENDING;
+        
         $entity = new TransportRequest(
             $model->fk_route,
             $model->fk_provider,
             $model->fk_student,
             $model->message,
-            $model->status,
+            $status,
             $model->id,
         );
 

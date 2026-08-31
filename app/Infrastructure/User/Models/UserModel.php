@@ -3,6 +3,7 @@
 namespace App\Infrastructure\User\Models;
 
 use App\Infrastructure\Address\Models\AddressModel;
+use App\Infrastructure\Provider\Models\ProviderModel;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Sanctum\HasApiTokens;
@@ -52,10 +53,10 @@ class UserModel extends Authenticatable
     //     return $this->hasMany(ChildModel::class, 'fk_parent');
     // }
 
-    // public function provider()
-    // {
-    //     return $this->hasOne(ProviderModel::class, 'fk_user');
-    // }
+    public function provider()
+    {
+        return $this->hasOne(ProviderModel::class, 'fk_user');
+    }
 
     // public function driver()
     // {

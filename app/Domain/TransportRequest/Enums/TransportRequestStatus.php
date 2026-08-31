@@ -33,4 +33,15 @@ enum TransportRequestStatus: string
     {
         return array_column(self::cases(), 'value');
     }
+
+    public static function fromString(string $status): self
+    {
+        return match($status) {
+            'pending' => self::PENDING,
+            'accepted' => self::ACCEPTED,
+            'rejected' => self::REJECTED,
+            'cancelled' => self::CANCELLED,
+            default => throw new \InvalidArgumentException("Invalid status: {$status}"),
+        };
+    }
 }

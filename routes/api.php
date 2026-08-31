@@ -38,6 +38,14 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
         Route::put('/{id}',['uses' => 'SchoolController@update', 'as' => 'schools.update'] );
         Route::delete('/{id}',['uses' => 'SchoolController@destroy', 'as' => 'schools.destroy'] );
     });
+
+    Route::controller(App\Http\Controllers\Api\V1\TransportRequest\TransportRequestController::class)->group(function () {
+        Route::get('/transport-requests', 'index');
+        Route::get('/transport-requests/{id}', 'show');
+        Route::post('/transport-requests', 'store');
+        Route::put('/transport-requests/{id}/response', 'respond');
+        Route::delete('/transport-requests/{id}', 'destroy');
+    });
 });
 
 // Rota para CSRF (necessário para autenticação stateful)
@@ -82,15 +90,5 @@ Route::prefix('v1')->group(function () {
         Route::post('/routes', 'store');
         Route::put('/routes/{id}', 'update');
         Route::delete('/routes/{id}', 'destroy');
-    });
-});
-// TransportRequest Routes
-Route::prefix('v1')->group(function () {
-    Route::controller(App\Http\Controllers\Api\V1\TransportRequest\TransportRequestController::class)->group(function () {
-        Route::get('/transport-requests', 'index');
-        Route::get('/transport-requests/{id}', 'show');
-        Route::post('/transport-requests', 'store');
-        Route::put('/transport-requests/{id}', 'update');
-        Route::delete('/transport-requests/{id}', 'destroy');
     });
 });

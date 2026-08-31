@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('fk_student')->constrained('children')->onDelete('cascade');
             $table->foreignId('fk_route')->constrained('routes')->onDelete('cascade');
             $table->foreignId('fk_provider')->constrained('providers')->onDelete('cascade');
-            $table->enum('status', ['PENDING', 'ACCEPTED', 'REJECTED', 'CANCELLED'])->default('PENDING');
+            $table->enum('status', ['pending', 'accepted', 'rejected', 'cancelled'])->default('pending');
             $table->text('message')->nullable();
             $table->timestamps();
 
