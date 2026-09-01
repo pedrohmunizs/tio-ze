@@ -2,6 +2,8 @@
 
 namespace App\Application\TransportRequest\UseCases;
 
+use App\Application\Contract\DTOs\CreateContractData;
+use App\Application\Contract\UseCases\CreateContractUseCase;
 use App\Application\TransportRequest\DTOs\RespondTransportRequestData;
 use App\Domain\TransportRequest\Entities\TransportRequest;
 use App\Domain\TransportRequest\Repositories\TransportRequestRepositoryInterface;
@@ -9,7 +11,8 @@ use App\Domain\TransportRequest\Repositories\TransportRequestRepositoryInterface
 class RespondTransportRequestUseCase
 {
     public function __construct(
-        private TransportRequestRepositoryInterface $repository
+        private TransportRequestRepositoryInterface $repository,
+        private CreateContractUseCase $create_contract
     ) {}
 
     public function execute(int $id, RespondTransportRequestData $data): TransportRequest
@@ -34,6 +37,18 @@ class RespondTransportRequestUseCase
         );
 
         $this->repository->save($entity);
+
+        if ($entity->isAccepted()) {
+            $contract_dto = CreateContractData::fromArray([
+                "fk_student" => $entity->getStudentId(),
+                "fk_route" => $entity->getRouteId(),
+                "fk_provider" => $entity->getProviderId(),
+                "fk_transport_request" => $entity->getId(),
+            ]);
+
+            $this->create_contract->execute($contract_dto);
+        }
+
         return $entity;
     }
 }

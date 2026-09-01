@@ -46,6 +46,14 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
         Route::put('/transport-requests/{id}/response', 'respond');
         Route::delete('/transport-requests/{id}', 'destroy');
     });
+
+    Route::controller(App\Http\Controllers\Api\V1\Route\RouteController::class)->group(function () {
+        Route::get('/routes', 'index');
+        Route::get('/routes/{id}', 'show');
+        Route::post('/routes', 'store');
+        Route::put('/routes/{id}', 'update');
+        Route::delete('/routes/{id}', 'destroy');
+    });
 });
 
 // Rota para CSRF (necessário para autenticação stateful)
@@ -82,13 +90,13 @@ Route::prefix('v1')->group(function () {
         Route::delete('/drivers/{id}', 'destroy');
     });
 });
-// Route Routes
+// Contract Routes
 Route::prefix('v1')->group(function () {
-    Route::controller(App\Http\Controllers\Api\V1\Route\RouteController::class)->group(function () {
-        Route::get('/routes', 'index');
-        Route::get('/routes/{id}', 'show');
-        Route::post('/routes', 'store');
-        Route::put('/routes/{id}', 'update');
-        Route::delete('/routes/{id}', 'destroy');
+    Route::controller(App\Http\Controllers\Api\V1\Contract\ContractController::class)->group(function () {
+        Route::get('/contracts', 'index');
+        Route::get('/contracts/{id}', 'show');
+        Route::post('/contracts', 'store');
+        Route::put('/contracts/{id}', 'update');
+        Route::delete('/contracts/{id}', 'destroy');
     });
 });

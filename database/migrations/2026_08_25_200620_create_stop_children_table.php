@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('fk_stop')->constrained('stops')->onDelete('cascade');
             $table->foreignId('fk_child')->constrained('children')->onDelete('cascade');
             $table->integer('stop_order');
-            $table->enum('type', ['PICKUP', 'DROPOFF']);
+            $table->enum('type', ['pickup', 'dropoff']);
             $table->timestamps();
 
             $table->unique(['fk_stop', 'fk_child']);

@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Domain\Address\Repositories\AddressRepositoryInterface;
+use App\Infrastructure\Contract\Repositories\EloquentContractRepository;
+use App\Domain\Contract\Repositories\ContractRepositoryInterface;
 use App\Infrastructure\TransportRequest\Repositories\EloquentTransportRequestRepository;
 use App\Domain\TransportRequest\Repositories\TransportRequestRepositoryInterface;
 use App\Infrastructure\Route\Repositories\EloquentRouteRepository;
@@ -28,6 +30,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        
         $this->app->bind(
             UserRepositoryInterface::class,
             EloquentUserRepository::class
@@ -66,6 +69,12 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             TransportRequestRepositoryInterface::class,
             EloquentTransportRequestRepository::class
+        );
+    
+        
+        $this->app->bind(
+            ContractRepositoryInterface::class,
+            EloquentContractRepository::class
         );
     }
 

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('fk_route')->constrained('routes')->onDelete('cascade');
             $table->foreignId('fk_address')->constrained('addresses')->onDelete('cascade');
             $table->integer('stop_order');
-            $table->enum('type', ['GOING', 'RETURNING']);
+            $table->enum('type', ['going', 'returning']);
             $table->timestamps();
 
             $table->unique(['fk_route', 'type', 'stop_order']);

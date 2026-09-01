@@ -14,7 +14,6 @@ class CreateRouteData
         public readonly string $returning_time,
         public readonly array $days_of_week,
         public readonly int $school_id,
-        public readonly int $provider_id,
         public readonly string $status = 'active',
     ) {}
 
@@ -27,7 +26,6 @@ class CreateRouteData
             returning_time: $request->input('returning_time'),
             days_of_week: $request->input('days_of_week', []),
             school_id: (int) $request->input('fk_school'),
-            provider_id: (int) $request->input('fk_provider'),
             status: $request->input('status', 'active'),
         );
     }
@@ -39,11 +37,8 @@ class CreateRouteData
             'price' => $this->price,
             'going_time' => $this->going_time,
             'returning_time' => $this->returning_time,
-            'days_of_week' => is_array($this->days_of_week) 
-                ? implode(',', $this->days_of_week) 
-                : $this->days_of_week,
+            'days_of_week' => is_array($this->days_of_week) ? implode(',', $this->days_of_week) : $this->days_of_week,
             'fk_school' => $this->school_id,
-            'fk_provider' => $this->provider_id,
             'status' => $this->status,
         ];
     }
@@ -58,7 +53,6 @@ class CreateRouteData
             'days_of_week' => 'required|array|min:1',
             'days_of_week.*' => 'in:MON,TUE,WED,THU,FRI,SAT,SUN',
             'fk_school' => 'required|exists:schools,id',
-            'fk_provider' => 'required|exists:providers,id',
             'status' => 'nullable|in:active,inactive',
         ];
     }
@@ -74,7 +68,6 @@ class CreateRouteData
             'returning_time.after' => 'O horário de volta deve ser após o horário de ida',
             'days_of_week.required' => 'Selecione pelo menos um dia da semana',
             'fk_school.exists' => 'Escola não encontrada',
-            'fk_provider.exists' => 'Prestador não encontrado',
         ];
     }
 }

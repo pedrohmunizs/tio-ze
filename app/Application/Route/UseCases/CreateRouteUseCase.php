@@ -21,15 +21,13 @@ class CreateRouteUseCase
 
     public function execute(CreateRouteData $data): Route
     {
-        // if (!$this->schoolRepository->findById($data->school_id)) {
-        //     throw new \DomainException('School not found');
-        // }
+        if (!$this->schoolRepository->findById($data->school_id)) {
+            throw new \DomainException('School not found');
+        }
 
-        // if (!$this->providerRepository->findById($data->provider_id)) {
-        //     throw new \DomainException('Provider not found');
-        // }
+        $provider_id = user()->provider->id;
 
-        if ($this->repository->existsByProviderAndName($data->provider_id, $data->name)) {
+        if ($this->repository->existsByProviderAndName($provider_id, $data->name)) {
             throw new \DomainException('Route already exists for this provider');
         }
 
@@ -45,7 +43,7 @@ class CreateRouteUseCase
             returningTime: $returningTime,
             daysOfWeek: $daysOfWeek,
             schoolId: $data->school_id,
-            providerId: $data->provider_id,
+            providerId: $provider_id,
         );
 
         $this->repository->save($entity);

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('fk_student')->constrained('children')->onDelete('cascade');
             $table->timestamp('pickup_time')->nullable();
             $table->timestamp('dropoff_time')->nullable();
-            $table->enum('status', ['PENDING', 'PICKED_UP', 'DROPPED_OFF', 'ABSENT'])->default('PENDING');
+            $table->enum('status', ['pending', 'picked_up', 'dropped_off', 'absent'])->default('pending');
             $table->timestamps();
 
             $table->unique(['fk_trip', 'fk_student']);

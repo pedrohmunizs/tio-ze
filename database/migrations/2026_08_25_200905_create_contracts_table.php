@@ -19,9 +19,7 @@ return new class extends Migration
             $table->foreignId('fk_transport_request')->constrained('transport_requests')->onDelete('cascade')->unique();
             $table->date('start_date');
             $table->date('end_date')->nullable();
-            $table->decimal('price', 10, 2);
             $table->enum('status', ['active', 'cancelled', 'expired', 'pending'])->default('pending');
-            $table->enum('type', ['weekly', 'monthly', 'one_time'])->default('monthly');
             $table->timestamps();
         });
     }
