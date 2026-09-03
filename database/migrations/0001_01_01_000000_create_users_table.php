@@ -22,6 +22,7 @@ return new class extends Migration
             $table->char('state', 2);
             $table->decimal('latitude', 10, 7)->nullable();
             $table->decimal('longitude', 10, 7)->nullable();
+            $table->enum('location_type', ['ROOFTOP', 'RANGE_INTERPOLATED', 'GEOMETRIC_CENTER', 'APPROXIMATE'])->nullable();
             $table->timestamps();
         });
 

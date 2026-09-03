@@ -1,9 +1,8 @@
 <?php
-// app/Domain/Address/Entities/Address.php
 
 namespace App\Domain\Address\Entities;
 
-use App\Domain\Address\ValueObjects\Coordinates;
+use App\Domain\Address\Enums\GeocodeLocationType;
 use DateTimeImmutable;
 
 class Address
@@ -16,6 +15,9 @@ class Address
     private string $neighborhood;
     private string $city;
     private string $state;
+    private ?float $latitude;
+    private ?float $longitude;
+    private ?GeocodeLocationType $locationType;
     private DateTimeImmutable $createdAt;
     private ?DateTimeImmutable $updatedAt;
     private ?DateTimeImmutable $deletedAt;
@@ -28,6 +30,9 @@ class Address
         string $city,
         string $state,
         ?string $complement = null,
+        ?float $latitude = null,
+        ?float $longitude = null,
+        ?GeocodeLocationType $locationType = null,
         ?int $id = null,
     ) {
         $this->zipCode = $this->sanitizeZipCode($zipCode);
@@ -37,6 +42,9 @@ class Address
         $this->neighborhood = $neighborhood;
         $this->city = $city;
         $this->state = $this->sanitizeState($state);
+        $this->latitude = $latitude;
+        $this->longitude = $longitude;
+        $this->locationType = $locationType;
         $this->id = $id;
         $this->createdAt = new DateTimeImmutable();
         $this->updatedAt = null;
@@ -77,27 +85,26 @@ class Address
         if (!preg_match('/^\d{5}-?\d{3}$/', $this->zipCode)) {
             throw new \InvalidArgumentException('Invalid ZIP code format. Use: 12345-678 or 12345678');
         }
+
+        if ($this->latitude !== null && ($this->latitude < -90 || $this->latitude > 90)) {
+            throw new \InvalidArgumentException('Latitude must be between -90 and 90');
+        }
+
+        if ($this->longitude !== null && ($this->longitude < -180 || $this->longitude > 180)) {
+            throw new \InvalidArgumentException('Longitude must be between -180 and 180');
+        }
     }
 
-    /**
-     * Sanitiza o CEP (remove formatação)
-     */
     private function sanitizeZipCode(string $zipCode): string
     {
         return preg_replace('/[^0-9]/', '', $zipCode);
     }
 
-    /**
-     * Sanitiza o estado (maiúsculo e apenas 2 caracteres)
-     */
     private function sanitizeState(string $state): string
     {
         return strtoupper(substr($state, 0, 2));
     }
 
-    /**
-     * Métodos de negócio
-     */
     public function update(
         ?string $zipCode = null,
         ?string $street = null,
@@ -141,6 +148,21 @@ class Address
         return $this;
     }
 
+    public function updateCoordinates(?float $latitude, ?float $longitude, ?GeocodeLocationType $locationType): self
+    {
+        $this->latitude = $latitude;
+        $this->longitude = $longitude;
+        $this->locationType = $locationType;
+        $this->updatedAt = new DateTimeImmutable();
+        
+        return $this;
+    }
+
+    public function hasCoordinates(): bool
+    {
+        return $this->latitude !== null && $this->longitude !== null;
+    }
+
     public function delete(): self
     {
         $this->deletedAt = new DateTimeImmutable();
@@ -160,72 +182,22 @@ class Address
         return $this->deletedAt !== null;
     }
 
-    /**
-     * Getters
-     */
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+    public function getId(): ?int { return $this->id; }
+    public function getZipCode(): string { return $this->zipCode;}
+    public function getFormattedZipCode(): string { return substr($this->zipCode, 0, 5) . '-' . substr($this->zipCode, 5);}
+    public function getStreet(): string { return $this->street;}
+    public function getNumber(): string { return $this->number;}
+    public function getComplement(): ?string { return $this->complement;}
+    public function getNeighborhood(): string { return $this->neighborhood;}
+    public function getCity(): string { return $this->city;}
+    public function getState(): string { return $this->state;}
+    public function getLatitude(): ?float { return $this->latitude;}
+    public function getLongitude(): ?float { return $this->longitude;}
+    public function getLocationType(): ?GeocodeLocationType { return $this->locationType;}
+    public function getCreatedAt(): DateTimeImmutable { return $this->createdAt;}
+    public function getUpdatedAt(): ?DateTimeImmutable { return $this->updatedAt;}
+    public function getDeletedAt(): ?DateTimeImmutable { return $this->deletedAt;}
 
-    public function getZipCode(): string
-    {
-        return $this->zipCode;
-    }
-
-    public function getFormattedZipCode(): string
-    {
-        return substr($this->zipCode, 0, 5) . '-' . substr($this->zipCode, 5);
-    }
-
-    public function getStreet(): string
-    {
-        return $this->street;
-    }
-
-    public function getNumber(): string
-    {
-        return $this->number;
-    }
-
-    public function getComplement(): ?string
-    {
-        return $this->complement;
-    }
-
-    public function getNeighborhood(): string
-    {
-        return $this->neighborhood;
-    }
-
-    public function getCity(): string
-    {
-        return $this->city;
-    }
-
-    public function getState(): string
-    {
-        return $this->state;
-    }
-
-    public function getCreatedAt(): DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function getUpdatedAt(): ?DateTimeImmutable
-    {
-        return $this->updatedAt;
-    }
-
-    public function getDeletedAt(): ?DateTimeImmutable
-    {
-        return $this->deletedAt;
-    }
-
-    /**
-     * Setters (para uso interno em repositórios/mappers)
-     */
     public function setId(int $id): self
     {
         $this->id = $id;
@@ -250,9 +222,6 @@ class Address
         return $this;
     }
 
-    /**
-     * Comparação
-     */
     public function equals(Address $other): bool
     {
         return $this->zipCode === $other->getZipCode() &&
@@ -264,9 +233,6 @@ class Address
                $this->state === $other->getState();
     }
 
-    /**
-     * To Array
-     */
     public function toArray(): array
     {
         return [
@@ -279,8 +245,9 @@ class Address
             'neighborhood' => $this->neighborhood,
             'city' => $this->city,
             'state' => $this->state,
-            // 'latitude' => $this->latitude,
-            // 'longitude' => $this->longitude,
+            'latitude' => $this->latitude,
+            'longitude' => $this->longitude,
+            'location_type' => $this->locationType,
             'created_at' => $this->createdAt->format('Y-m-d H:i:s'),
             'updated_at' => $this->updatedAt?->format('Y-m-d H:i:s'),
             'deleted_at' => $this->deletedAt?->format('Y-m-d H:i:s'),
@@ -292,9 +259,6 @@ class Address
         return json_encode($this->toArray());
     }
 
-    /**
-     * Factory methods
-     */
     public static function create(
         string $zipCode,
         string $street,
@@ -303,6 +267,9 @@ class Address
         string $city,
         string $state,
         ?string $complement = null,
+        ?float $latitude = null,
+        ?float $longitude = null,
+        ?GeocodeLocationType $locationType = null,
     ): self {
         return new self(
             zipCode: $zipCode,
@@ -312,12 +279,12 @@ class Address
             city: $city,
             state: $state,
             complement: $complement,
+            latitude: $latitude,
+            longitude: $longitude,
+            locationType: $locationType
         );
     }
 
-    /**
-     * Cria a partir de um array (útil para importação)
-     */
     public static function fromArray(array $data): self
     {
         return new self(
@@ -328,7 +295,25 @@ class Address
             city: $data['city'],
             state: $data['state'],
             complement: $data['complement'] ?? null,
+            latitude: isset($data['latitude']) ? (float) $data['latitude'] : null,
+            longitude: isset($data['longitude']) ? (float) $data['longitude'] : null,
+            locationType: $data['location_type'],
             id: $data['id'] ?? null,
+        );
+    }
+
+    public static function fromGeocoding(array $geocodeData): self
+    {
+        return new self(
+            zipCode: $geocodeData['zip_code'] ?? $geocodeData['cep'] ?? '',
+            street: $geocodeData['street'] ?? $geocodeData['logradouro'] ?? '',
+            number: $geocodeData['number'] ?? 's/n',
+            neighborhood: $geocodeData['neighborhood'] ?? $geocodeData['bairro'] ?? '',
+            city: $geocodeData['city'] ?? $geocodeData['localidade'] ?? '',
+            state: $geocodeData['state'] ?? $geocodeData['uf'] ?? '',
+            complement: $geocodeData['complement'] ?? $geocodeData['complemento'] ?? null,
+            latitude: isset($geocodeData['latitude']) ? (float) $geocodeData['latitude'] : null,
+            longitude: isset($geocodeData['longitude']) ? (float) $geocodeData['longitude'] : null,
         );
     }
 }

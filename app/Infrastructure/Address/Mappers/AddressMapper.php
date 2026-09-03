@@ -3,6 +3,7 @@
 namespace App\Infrastructure\Address\Mappers;
 
 use App\Domain\Address\Entities\Address;
+use App\Domain\Address\Enums\GeocodeLocationType;
 use App\Infrastructure\Address\Models\AddressModel;
 use DateTimeImmutable;
 
@@ -10,14 +11,19 @@ class AddressMapper
 {
     public static function toDomain(AddressModel $model): Address
     {
+        $locationType = GeocodeLocationType::fromString($model->location_type);
+
         $address = new Address(
             zipCode: $model->zip_code,
             street: $model->street,
             number: $model->number,
-            complement: $model->complement,
             neighborhood: $model->neighborhood,
             city: $model->city,
+            complement: $model->complement,
+            latitude: $model->latitude ? (float) $model->latitude : null,
+            longitude: $model->longitude ? (float) $model->longitude : null,
             state: $model->state,
+            locationType: $locationType,
         );
 
         $reflection = new \ReflectionClass($address);
@@ -54,6 +60,9 @@ class AddressMapper
             'city' => $address->getCity(),
             'state' => $address->getState(),
             'complement' => $address->getComplement(),
+            'latitude' => $address->getLatitude(),
+            'longitude' => $address->getLongitude(),
+            'location_type' => $address->getLocationType()?->value,
         ];
     }
 

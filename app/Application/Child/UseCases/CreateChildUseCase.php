@@ -5,15 +5,14 @@ namespace App\Application\Child\UseCases;
 use App\Domain\Child\Entities\Child;
 use App\Domain\Child\Repositories\ChildRepositoryInterface;
 use App\Application\Child\DTOs\CreateChildData;
-use App\Domain\Address\Entities\Address;
-use App\Domain\Address\Repositories\AddressRepositoryInterface;
+use App\Domain\Address\Services\AddressService;
 use App\Infrastructure\User\Models\UserModel;
 
 class CreateChildUseCase
 {
     public function __construct(
         private ChildRepositoryInterface $repository,
-        private AddressRepositoryInterface $addressRepository,
+        private AddressService $address_service,
     ) {}
 
     public function execute(CreateChildData $data): Child
@@ -39,7 +38,15 @@ class CreateChildUseCase
             $parent_id = user()->id;
         }
 
-        $address_id = $this->processAddress($data);
+        $address_id = $this->address_service->createAddressFromData(
+            $data->zip_code,
+            $data->street,
+            $data->number,
+            $data->neighborhood,
+            $data->city,
+            $data->state,
+            $data->complement,
+        );
 
         $entity = new Child(
             name: $data->name,
@@ -52,24 +59,5 @@ class CreateChildUseCase
         
         $this->repository->save($entity);
         return $entity;
-    }
-
-    private function processAddress(CreateChildData $data): ?int
-    {
-        if (!$data->zip_code) {
-            return null;
-        }
-
-        $address = new Address(
-            zipCode: $data->zip_code,
-            street: $data->street,
-            number: $data->number,
-            complement: $data->complement,
-            neighborhood: $data->neighborhood,
-            city: $data->city,
-            state: $data->state,
-        );
-
-        return $this->addressRepository->save($address);
     }
 }

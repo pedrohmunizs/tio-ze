@@ -10,8 +10,7 @@ use App\Application\User\DTOs\CreateUserData;
 use App\Domain\User\Entities\User;
 use App\Domain\User\ValueObjects\Email;
 use App\Domain\User\Repositories\UserRepositoryInterface;
-use App\Domain\Address\Entities\Address;
-use App\Domain\Address\Repositories\AddressRepositoryInterface;
+use App\Domain\Address\Services\AddressService;
 use App\Domain\User\ValueObjects\CPF;
 use App\Infrastructure\User\Models\UserModel;
 use Spatie\Permission\Models\Role;
@@ -20,9 +19,9 @@ class RegisterUserUseCase
 {
     public function __construct(
         private UserRepositoryInterface $repository,
-        private AddressRepositoryInterface $addressRepository,
         private CreateProviderUseCase $createProviderUseCase,
         private CreateDriverUseCase $createDriverUseCase,
+        private AddressService $address_service,
     ) {}
 
     public function execute(CreateUserData $data): User
@@ -38,7 +37,15 @@ class RegisterUserUseCase
             throw new \DomainException('CPF already registered');
         }
 
-        $address_id = $this->processAddress($data);
+        $address_id = $this->address_service->createAddressFromData(
+            $data->zip_code,
+            $data->street,
+            $data->number,
+            $data->neighborhood,
+            $data->city,
+            $data->state,
+            $data->complement,
+        );
 
         $user = new User(
             name: $data->name,
@@ -49,7 +56,6 @@ class RegisterUserUseCase
             addressId: $address_id,
         );
 
-        // 4. Persistir
         $this->repository->save($user);
 
         switch ($data->role) {
@@ -99,7 +105,7 @@ class RegisterUserUseCase
                     complement: $data->complement,
                 );
 
-                $driver = $this->createDriverUseCase->execute($driver_dto);
+                $this->createDriverUseCase->execute($driver_dto);
 
                 break;
             default:
@@ -113,25 +119,6 @@ class RegisterUserUseCase
         // event(new UserRegisteredEvent($user));
 
         return $user;
-    }
-
-    private function processAddress(CreateUserData $data): ?int
-    {
-        if (!$data->zip_code) {
-            return null;
-        }
-
-        $address = new Address(
-            zipCode: $data->zip_code,
-            street: $data->street,
-            number: $data->number,
-            complement: $data->complement,
-            neighborhood: $data->neighborhood,
-            city: $data->city,
-            state: $data->state,
-        );
-
-        return $this->addressRepository->save($address);
     }
 
     private function assignRoleToUser(User $user, string $roleName): void
