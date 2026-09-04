@@ -2,8 +2,13 @@
 
 namespace App\Domain\TransportRequest\Entities;
 
+use App\Domain\Child\Entities\Child;
+use App\Domain\Child\Repositories\ChildRepositoryInterface;
+use App\Domain\Route\Entities\Route;
+use App\Domain\Route\Repositories\RouteRepositoryInterface;
 use App\Domain\TransportRequest\Enums\TransportRequestStatus;
 use DateTimeImmutable;
+use Illuminate\Support\Facades\App;
 
 class TransportRequest
 {
@@ -11,6 +16,8 @@ class TransportRequest
     private int $fk_route;
     private int $fk_provider;
     private int $fk_student;
+    private ?Child $student = null;
+    private ?Route $route = null;
     private ?string $message = null;
     private TransportRequestStatus $status;
     private ?DateTimeImmutable $createdAt;
@@ -42,6 +49,26 @@ class TransportRequest
     public function getRouteId(): int { return $this->fk_route; }
     public function getCreatedAt(): DateTimeImmutable { return $this->createdAt; }
     public function getUpdatedAt(): ?DateTimeImmutable { return $this->updatedAt; }
+
+    public function getStudent(): ?Child
+    {
+        if ($this->student === null && $this->fk_student) {
+            $repository = App::make(ChildRepositoryInterface::class);
+            $this->student = $repository->findById($this->fk_student);
+        }
+        
+        return $this->student;
+    }
+
+    public function getRoute(): ?Route
+    {
+        if ($this->route === null && $this->fk_route) {
+            $repository = App::make(RouteRepositoryInterface::class);
+            $this->route = $repository->findById($this->fk_route);
+        }
+        
+        return $this->route;
+    }
 
     public function setId(int $id): self
     {

@@ -8,7 +8,6 @@ use App\Http\Controllers\Api\V1\User\UserController;
 Route::post('/v1/login', [AuthController::class, 'login']);
 Route::post('/v1/register', [AuthController::class, 'register']);
 
-
 // Rotas protegidas com Sanctum
 Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -98,5 +97,25 @@ Route::prefix('v1')->group(function () {
         Route::post('/contracts', 'store');
         Route::put('/contracts/{id}', 'update');
         Route::delete('/contracts/{id}', 'destroy');
+    });
+});
+// Stop Routes
+Route::prefix('v1')->group(function () {
+    Route::controller(App\Http\Controllers\Api\V1\Stop\StopController::class)->group(function () {
+        Route::get('/stops', 'index');
+        Route::get('/stops/{id}', 'show');
+        Route::post('/stops', 'store');
+        Route::put('/stops/{id}', 'update');
+        Route::delete('/stops/{id}', 'destroy');
+    });
+});
+// StopChild Routes
+Route::prefix('v1')->group(function () {
+    Route::controller(App\Http\Controllers\Api\V1\StopChild\StopChildController::class)->group(function () {
+        Route::get('/stopchildren', 'index');
+        Route::get('/stopchildren/{id}', 'show');
+        Route::post('/stopchildren', 'store');
+        Route::put('/stopchildren/{id}', 'update');
+        Route::delete('/stopchildren/{id}', 'destroy');
     });
 });

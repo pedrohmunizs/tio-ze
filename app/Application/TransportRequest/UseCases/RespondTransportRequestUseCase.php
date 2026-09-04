@@ -4,6 +4,7 @@ namespace App\Application\TransportRequest\UseCases;
 
 use App\Application\Contract\DTOs\CreateContractData;
 use App\Application\Contract\UseCases\CreateContractUseCase;
+use App\Application\Stop\UseCases\CreateStopUseCase;
 use App\Application\TransportRequest\DTOs\RespondTransportRequestData;
 use App\Domain\TransportRequest\Entities\TransportRequest;
 use App\Domain\TransportRequest\Repositories\TransportRequestRepositoryInterface;
@@ -12,7 +13,8 @@ class RespondTransportRequestUseCase
 {
     public function __construct(
         private TransportRequestRepositoryInterface $repository,
-        private CreateContractUseCase $create_contract
+        private CreateContractUseCase $create_contract,
+        private CreateStopUseCase $create_stop_use_case,
     ) {}
 
     public function execute(int $id, RespondTransportRequestData $data): TransportRequest
@@ -31,10 +33,7 @@ class RespondTransportRequestUseCase
             throw new \DomainException('Esta solicitação já foi respondida');
         }
 
-        $entity->respond(
-            $data->status,
-            $data->message
-        );
+        $entity->respond($data->status, $data->message);
 
         $this->repository->save($entity);
 
@@ -47,6 +46,23 @@ class RespondTransportRequestUseCase
             ]);
 
             $this->create_contract->execute($contract_dto);
+
+            $student = $entity->getStudent();
+            $route = $entity->getRoute();
+
+            $this->create_stop_use_case->execute(
+                fk_route: $route->getId(),
+                fk_student: $student->getId(),
+                fk_address: $student->getAddressId(),
+                type: 'going',
+            );
+
+            $this->create_stop_use_case->execute(
+                fk_route: $route->getId(),
+                fk_student: $student->getId(),
+                fk_address: $student->getAddressId(),
+                type: 'returning',
+            );
         }
 
         return $entity;

@@ -3,6 +3,10 @@
 namespace App\Providers;
 
 use App\Domain\Address\Repositories\AddressRepositoryInterface;
+use App\Infrastructure\StopChild\Repositories\EloquentStopChildRepository;
+use App\Domain\StopChild\Repositories\StopChildRepositoryInterface;
+use App\Infrastructure\Stop\Repositories\EloquentStopRepository;
+use App\Domain\Stop\Repositories\StopRepositoryInterface;
 use App\Infrastructure\Contract\Repositories\EloquentContractRepository;
 use App\Domain\Contract\Repositories\ContractRepositoryInterface;
 use App\Infrastructure\TransportRequest\Repositories\EloquentTransportRequestRepository;
@@ -30,6 +34,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        
+        
         
         $this->app->bind(
             UserRepositoryInterface::class,
@@ -75,6 +81,18 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             ContractRepositoryInterface::class,
             EloquentContractRepository::class
+        );
+    
+        
+        $this->app->bind(
+            StopRepositoryInterface::class,
+            EloquentStopRepository::class
+        );
+    
+        
+        $this->app->bind(
+            StopChildRepositoryInterface::class,
+            EloquentStopChildRepository::class
         );
     }
 
