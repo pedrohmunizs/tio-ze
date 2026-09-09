@@ -17,10 +17,13 @@ class CreateStopUseCase
 
     public function execute(int $fk_route, int $fk_student, int $fk_address, string $type): Stop
     {
+        $maxOrder = $this->repository->getMaxOrder($fk_route, $type);
+        $nextOrder = $maxOrder + 1;
+
         $entity = new Stop(
             fk_route: $fk_route,
             fk_address: $fk_address,
-            stop_order: 0,
+            stop_order: $nextOrder,
             type: StopType::from($type),
         );
 
@@ -29,7 +32,7 @@ class CreateStopUseCase
         $stop_child = new StopChild(
             fk_stop: $entity->getId(),
             fk_child: $fk_student,
-            stop_order: 0,
+            stop_order: $nextOrder,
         );
 
         $this->stopChildRepository->save($stop_child);

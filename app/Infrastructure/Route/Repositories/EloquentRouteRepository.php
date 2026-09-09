@@ -12,7 +12,7 @@ class EloquentRouteRepository implements RouteRepositoryInterface
 {
     public function findById(int $id): ?Route
     {
-        $model = RouteModel::find($id);
+        $model = RouteModel::with(['school', 'provider', 'driver'])->find($id);
         return $model ? RouteMapper::toDomain($model) : null;
     }
 

@@ -3,6 +3,7 @@
 namespace App\Domain\Stop\Repositories;
 
 use App\Domain\Stop\Entities\Stop;
+use Illuminate\Support\Collection;
 
 interface StopRepositoryInterface
 {
@@ -14,4 +15,7 @@ interface StopRepositoryInterface
     public function delete(int $id): void;
     public function exists(int $id): bool;
     public function count(array $filters = []): int;
+    public function findByRouteId(int $fk_route, string $type) : array;
+    public function updateOrder(int $fk_student, int $stop_order, int $fk_route, string $type): void;
+    public function getMaxOrder(int $fk_route, string $type): int;
 }

@@ -1,5 +1,4 @@
 <?php
-// app/Application/Route/DTOs/CreateRouteData.php
 
 namespace App\Application\Route\DTOs;
 
@@ -14,6 +13,7 @@ class CreateRouteData
         public readonly string $returning_time,
         public readonly array $days_of_week,
         public readonly int $school_id,
+        public readonly ?int $driver_id = null,
         public readonly string $status = 'active',
     ) {}
 
@@ -26,6 +26,7 @@ class CreateRouteData
             returning_time: $request->input('returning_time'),
             days_of_week: $request->input('days_of_week', []),
             school_id: (int) $request->input('fk_school'),
+            driver_id: $request->input('fk_driver') ? (int) $request->input('fk_driver') : null,
             status: $request->input('status', 'active'),
         );
     }
@@ -39,6 +40,7 @@ class CreateRouteData
             'returning_time' => $this->returning_time,
             'days_of_week' => is_array($this->days_of_week) ? implode(',', $this->days_of_week) : $this->days_of_week,
             'fk_school' => $this->school_id,
+            'fk_driver' => $this->driver_id,
             'status' => $this->status,
         ];
     }
@@ -53,6 +55,7 @@ class CreateRouteData
             'days_of_week' => 'required|array|min:1',
             'days_of_week.*' => 'in:MON,TUE,WED,THU,FRI,SAT,SUN',
             'fk_school' => 'required|exists:schools,id',
+            'fk_driver' => 'nullable|exists:drivers,id',
             'status' => 'nullable|in:active,inactive',
         ];
     }
@@ -68,6 +71,7 @@ class CreateRouteData
             'returning_time.after' => 'O horário de volta deve ser após o horário de ida',
             'days_of_week.required' => 'Selecione pelo menos um dia da semana',
             'fk_school.exists' => 'Escola não encontrada',
+            'fk_driver.exists' => 'Motorista não encontrado',
         ];
     }
 }

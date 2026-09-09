@@ -3,7 +3,10 @@
 namespace App\Domain\Driver\Entities;
 
 use App\Domain\Driver\Enums\DriverStatus;
+use App\Domain\User\Entities\User;
+use App\Domain\User\Repositories\UserRepositoryInterface;
 use DateTimeImmutable;
+use Illuminate\Support\Facades\App;
 
 class Driver
 {
@@ -15,6 +18,7 @@ class Driver
     private ?bool $isAutonomous;
     private int $userId;
     private int $providerId;
+    private ?User $user = null;
     private ?DateTimeImmutable $createdAt;
     private ?DateTimeImmutable $updatedAt = null;
     private ?DateTimeImmutable $deletedAt = null;
@@ -51,6 +55,16 @@ class Driver
     public function getUserId(): ?int { return $this->userId; }
     public function getCreatedAt(): DateTimeImmutable { return $this->createdAt; }
     public function getUpdatedAt(): ?DateTimeImmutable { return $this->updatedAt; }
+
+    public function getUser(): ?User
+    {
+        if ($this->user === null && $this->userId) {
+            $repository = App::make(UserRepositoryInterface::class);
+            $this->user = $repository->findById($this->userId);
+        }
+        
+        return $this->user;
+    }
 
     public function setId(int $id): self
     {

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('fk_school')->constrained('schools')->onDelete('cascade');
             $table->foreignId('fk_provider')->constrained('providers')->onDelete('cascade');
+            $table->foreignId('fk_driver')->constrained('drivers')->onDelete('cascade');
             $table->string('name');
             $table->decimal('price', 10, 2);
             $table->time('going_time');
@@ -24,7 +25,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->unique(['fk_provider', 'fk_school', 'name']);
+            $table->unique(['fk_provider', 'fk_driver', 'fk_school', 'name']);
         });
     }
 

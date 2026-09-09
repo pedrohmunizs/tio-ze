@@ -50,6 +50,7 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
         Route::get('/routes', 'index');
         Route::get('/routes/{id}', 'show');
         Route::post('/routes', 'store');
+        Route::put('/routes/{id}/optimize', 'optimize');
         Route::put('/routes/{id}', 'update');
         Route::delete('/routes/{id}', 'destroy');
     });

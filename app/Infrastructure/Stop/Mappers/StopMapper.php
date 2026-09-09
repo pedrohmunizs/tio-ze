@@ -4,6 +4,8 @@ namespace App\Infrastructure\Stop\Mappers;
 
 use App\Domain\Stop\Entities\Stop;
 use App\Domain\Stop\Enums\StopType;
+use App\Infrastructure\Address\Mappers\AddressMapper;
+use App\Infrastructure\Child\Mappers\ChildMapper;
 use App\Infrastructure\Stop\Models\StopModel;
 use DateTimeImmutable;
 
@@ -20,6 +22,14 @@ class StopMapper
             type: $type,
             id: $model->id
         );
+
+        if ($model->relationLoaded('student') && $model->student) {
+            $entity->loadStudent(ChildMapper::toDomain($model->student));
+        }
+
+        if ($model->relationLoaded('address') && $model->address) {
+            $entity->loadAddress(AddressMapper::toDomain($model->address));
+        }
 
         $reflection = new \ReflectionClass($entity);
         $statusProperty = $reflection->getProperty('type');
@@ -49,6 +59,9 @@ class StopMapper
             'fk_address' => $entity->getAddressId(),
             'stop_order' => $entity->getStopOrder(),
             'type' => $entity->getType()->value,
+            'type_label' => $entity->getType()->label(),
+            'student' => $entity->getStudent()?->toArray(),
+            'address' => $entity->getAddress()?->toArray(),
             'created_at' => $entity->getCreatedAt(),
         ];
     }

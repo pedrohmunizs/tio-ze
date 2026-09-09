@@ -5,7 +5,6 @@ namespace App\Application\Route\UseCases;
 use App\Domain\Route\Entities\Route;
 use App\Domain\Route\Repositories\RouteRepositoryInterface;
 use App\Application\Route\DTOs\CreateRouteData;
-use App\Domain\Provider\Repositories\ProviderRepositoryInterface;
 use App\Domain\Route\ValueObjects\DaysOfWeek;
 use App\Domain\Route\ValueObjects\Price;
 use App\Domain\Route\ValueObjects\Time;
@@ -16,7 +15,6 @@ class CreateRouteUseCase
     public function __construct(
         private RouteRepositoryInterface $repository,
         private SchoolRepositoryInterface $schoolRepository,
-        private ProviderRepositoryInterface $providerRepository,
     ) {}
 
     public function execute(CreateRouteData $data): Route
@@ -44,6 +42,7 @@ class CreateRouteUseCase
             daysOfWeek: $daysOfWeek,
             schoolId: $data->school_id,
             providerId: $provider_id,
+            driverId: $data->driver_id,
         );
 
         $this->repository->save($entity);

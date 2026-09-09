@@ -2,6 +2,8 @@
 
 namespace App\Infrastructure\StopChild\Models;
 
+use App\Infrastructure\Child\Models\ChildModel;
+use App\Infrastructure\Stop\Models\StopModel;
 use Illuminate\Database\Eloquent\Model;
 
 class StopChildModel extends Model
@@ -17,9 +19,13 @@ class StopChildModel extends Model
         'updated_at',
     ];
 
-    // Relacionamentos
-    // public function relacionamento()
-    // {
-    //     return $this->belongsTo(OutroModel::class, 'fk_outro_id');
-    // }
+    public function stop()
+    {
+        return $this->belongsTo(StopModel::class, 'fk_stop');
+    }
+
+    public function child()
+    {
+        return $this->belongsTo(ChildModel::class, 'fk_child');
+    }
 }

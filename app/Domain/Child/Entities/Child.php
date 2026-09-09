@@ -2,8 +2,11 @@
 
 namespace App\Domain\Child\Entities;
 
+use App\Domain\Address\Entities\Address;
+use App\Domain\Address\Repositories\AddressRepositoryInterface;
 use App\Domain\Child\Enums\ChildStatus;
 use DateTimeImmutable;
+use Illuminate\Support\Facades\App;
 
 class Child
 {
@@ -15,6 +18,7 @@ class Child
     private ?int $addressId;
     private ?int $parentId;
     private ?int $schoolId;
+    private ?Address $address = null;
     private ?DateTimeImmutable $createdAt;
     private ?DateTimeImmutable $updatedAt = null;
     private ?DateTimeImmutable $deletedAt = null;
@@ -142,6 +146,16 @@ class Child
     public function getParentId(): ?int { return $this->parentId; }
     public function getCreatedAt(): DateTimeImmutable { return $this->createdAt; }
     public function getUpdatedAt(): ?DateTimeImmutable { return $this->updatedAt; }
+
+    public function getAddress(): ?Address
+    {
+        if ($this->address === null && $this->addressId) {
+            $repository = App::make(AddressRepositoryInterface::class);
+            $this->address = $repository->findById($this->addressId);
+        }
+        
+        return $this->address;
+    }
 
     public function setId(int $id): self
     {

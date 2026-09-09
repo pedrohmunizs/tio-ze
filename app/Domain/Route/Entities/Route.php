@@ -3,11 +3,17 @@
 
 namespace App\Domain\Route\Entities;
 
+use App\Domain\Driver\Entities\Driver;
+use App\Domain\Driver\Repositories\DriverRepositoryInterface;
+use App\Domain\Provider\Entities\Provider;
 use App\Domain\Route\Enums\RouteStatus;
 use App\Domain\Route\ValueObjects\DaysOfWeek;
 use App\Domain\Route\ValueObjects\Time;
 use App\Domain\Route\ValueObjects\Price;
+use App\Domain\School\Entities\School;
+use App\Domain\School\Repositories\SchoolRepositoryInterface;
 use DateTimeImmutable;
+use Illuminate\Support\Facades\App;
 
 class Route
 {
@@ -19,7 +25,11 @@ class Route
     private DaysOfWeek $daysOfWeek;
     private int $schoolId;
     private int $providerId;
+    private int $driverId;
     private RouteStatus $status;
+    private ?Driver $driver = null;
+    private ?School $school = null;
+    private ?Provider $provider = null;
     private DateTimeImmutable $createdAt;
     private ?DateTimeImmutable $updatedAt;
     private ?DateTimeImmutable $deletedAt;
@@ -32,6 +42,7 @@ class Route
         DaysOfWeek $daysOfWeek,
         int $schoolId,
         int $providerId,
+        int $driverId,
         RouteStatus $status = RouteStatus::ACTIVE,
         ?int $id = null,
     ) {
@@ -44,6 +55,7 @@ class Route
         $this->daysOfWeek = $daysOfWeek;
         $this->schoolId = $schoolId;
         $this->providerId = $providerId;
+        $this->driverId = $driverId;
         $this->status = $status;
         $this->id = $id;
         $this->createdAt = new DateTimeImmutable();
@@ -152,6 +164,24 @@ class Route
         return $this->deletedAt !== null;
     }
 
+    public function loadSchool(School $school): self
+    {
+        $this->school = $school;
+        return $this;
+    }
+
+    public function loadProvider(Provider $provider): self
+    {
+        $this->provider = $provider;
+        return $this;
+    }
+
+    public function loadDriver(Driver $driver): self
+    {
+        $this->driver = $driver;
+        return $this;
+    }
+
     public function getId(): ?int { return $this->id; }
     public function getName(): string { return $this->name; }
     public function getPrice(): Price { return $this->price; }
@@ -164,10 +194,14 @@ class Route
     public function getDaysOfWeekValue(): string { return $this->daysOfWeek->toString(); }
     public function getSchoolId(): int { return $this->schoolId; }
     public function getProviderId(): int { return $this->providerId; }
+    public function getDriverId(): int { return $this->driverId; }
     public function getStatus(): RouteStatus { return $this->status; }
     public function getCreatedAt(): DateTimeImmutable { return $this->createdAt; }
     public function getUpdatedAt(): ?DateTimeImmutable { return $this->updatedAt; }
     public function getDeletedAt(): ?DateTimeImmutable { return $this->deletedAt; }
+    public function getSchool(): ?School { return $this->school; }
+    public function getDriver(): ?Driver { return $this->driver; }
+    public function getProvider(): ?Provider { return $this->provider; }
 
     public function setId(int $id): self
     {
@@ -207,7 +241,11 @@ class Route
             'status' => $this->status->value,
             'status_label' => $this->status->label(),
             'school_id' => $this->schoolId,
+            'school' => $this->school?->toArray(),
+            'provider' => $this->provider?->toArray(),
+            'driver' => $this->driver?->toArray(),
             'provider_id' => $this->providerId,
+            'driver_id' => $this->driverId,
             'created_at' => $this->createdAt->format('Y-m-d H:i:s'),
             'updated_at' => $this->updatedAt?->format('Y-m-d H:i:s'),
             'deleted_at' => $this->deletedAt?->format('Y-m-d H:i:s'),

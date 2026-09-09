@@ -4,13 +4,19 @@ namespace App\Infrastructure\School\Mappers;
 
 use App\Domain\School\Entities\School;
 use App\Domain\School\Enums\SchoolStatus;
+use App\Infrastructure\Address\Mappers\AddressMapper;
 use App\Infrastructure\School\Models\SchoolModel;
 use DateTimeImmutable;
+use Illuminate\Support\Facades\Log;
 
 class SchoolMapper
 {
     public static function toDomain(SchoolModel $model): School
     {
+
+        if (!$model->relationLoaded('address')) {
+            $model->load('address');
+        }
 
         $entity = new School(
             name: $model->name,
@@ -18,6 +24,10 @@ class SchoolMapper
             addressId: $model->fk_address,
             id: $model->id
         );
+
+        if ($model->relationLoaded('address') && $model->address) {
+            $entity->loadAddress(AddressMapper::toDomain($model->address));
+        }
 
         $reflection = new \ReflectionClass($entity);
         $statusProperty = $reflection->getProperty('status');
@@ -53,6 +63,7 @@ class SchoolMapper
             'phone' => $entity->getPhone(),
             'status' => $entity->getStatus()->value,
             'fk_address' => $entity->getAddressId(),
+            'address' => $entity->getAddress()?->toArray(),
         ];
     }
 

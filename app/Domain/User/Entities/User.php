@@ -2,10 +2,13 @@
 
 namespace App\Domain\User\Entities;
 
+use App\Domain\Address\Entities\Address;
+use App\Domain\Address\Repositories\AddressRepositoryInterface;
 use App\Domain\User\Enums\UserStatus;
 use App\Domain\User\ValueObjects\CPF;
 use App\Domain\User\ValueObjects\Email;
 use DateTimeImmutable;
+use Illuminate\Support\Facades\App;
 
 class User
 {
@@ -17,6 +20,7 @@ class User
     private string $password;
     private UserStatus $status;
     private ?int $addressId;
+    private ?Address $address = null;
     private DateTimeImmutable $createdAt;
     private ?DateTimeImmutable $updatedAt = null;
     private ?DateTimeImmutable $deletedAt = null;
@@ -103,6 +107,16 @@ class User
     public function getCreatedAt(): DateTimeImmutable { return $this->createdAt; }
     public function getUpdatedAt(): ?DateTimeImmutable { return $this->updatedAt; }
     // public function getDeletedAt(): ?DateTimeImmutable { return $this->deletedAt; }
+
+    public function getAddress(): ?Address
+    {
+        if ($this->address === null && $this->addressId) {
+            $repository = App::make(AddressRepositoryInterface::class);
+            $this->address = $repository->findById($this->addressId);
+        }
+        
+        return $this->address;
+    }
 
     public function setId(int $id): self
     {

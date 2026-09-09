@@ -7,12 +7,15 @@ use App\Domain\Stop\Repositories\StopRepositoryInterface;
 use App\Infrastructure\Stop\Models\StopModel;
 use App\Infrastructure\Stop\Mappers\StopMapper;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
+use Override;
 
 class EloquentStopRepository implements StopRepositoryInterface
 {
     public function findById(int $id): ?Stop
     {
-        $model = StopModel::find($id);
+        $model = StopModel::with(['student', 'student.address', 'address'])->find($id);
         return $model ? StopMapper::toDomain($model) : null;
     }
 
@@ -91,5 +94,35 @@ class EloquentStopRepository implements StopRepositoryInterface
         }
 
         return $query->count();
+    }
+
+    public function findByRouteId(int $fk_route, string $type): array
+    {
+        return StopModel::with(['student', 'student.address', 'address'])
+            ->where('fk_route', $fk_route)
+            ->where('type', $type)
+            ->orderBy('stop_order')
+            ->get()
+            ->toArray();
+    }
+
+    public function updateOrder(int $fk_student, int $stop_order, int $fk_route, string $type): void
+    {
+        $stop = StopModel::where('fk_route', $fk_route)
+            ->where('type', $type)
+            ->whereHas('stopChildren', function ($query) use ($fk_student) {
+                $query->where('fk_child', $fk_student);
+            })
+            ->first();
+
+        if ($stop) {
+            $stop->update(['stop_order' => $stop_order]);
+        }
+    }
+
+    public function getMaxOrder(int $fk_route, string $type): int
+    {
+        $max = StopModel::where('fk_route', $fk_route)->where('type', $type)->max('stop_order');
+        return $max ?? 0;
     }
 }

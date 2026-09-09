@@ -4,6 +4,7 @@ namespace App\Application\TransportRequest\UseCases;
 
 use App\Application\Contract\DTOs\CreateContractData;
 use App\Application\Contract\UseCases\CreateContractUseCase;
+use App\Application\Route\UseCases\OptimizePickupRouteUseCase;
 use App\Application\Stop\UseCases\CreateStopUseCase;
 use App\Application\TransportRequest\DTOs\RespondTransportRequestData;
 use App\Domain\TransportRequest\Entities\TransportRequest;
@@ -15,6 +16,7 @@ class RespondTransportRequestUseCase
         private TransportRequestRepositoryInterface $repository,
         private CreateContractUseCase $create_contract,
         private CreateStopUseCase $create_stop_use_case,
+        private OptimizePickupRouteUseCase $optimize_route_use_case,
     ) {}
 
     public function execute(int $id, RespondTransportRequestData $data): TransportRequest
@@ -63,6 +65,12 @@ class RespondTransportRequestUseCase
                 fk_address: $student->getAddressId(),
                 type: 'returning',
             );
+
+            $types = ['going', 'returning'];
+
+            foreach ($types as $type) {
+                $this->optimize_route_use_case->execute($entity->getRouteId(), $type);
+            }
         }
 
         return $entity;

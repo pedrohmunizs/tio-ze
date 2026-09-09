@@ -2,6 +2,8 @@
 
 namespace App\Domain\Stop\Entities;
 
+use App\Domain\Address\Entities\Address;
+use App\Domain\Child\Entities\Child;
 use App\Domain\Stop\Enums\StopType;
 use DateTimeImmutable;
 
@@ -12,6 +14,8 @@ class Stop
     private int $fk_address;
     private int $stop_order;
     private StopType $type;
+    private ?Child $student = null;
+    private ?Address $address = null;
     private ?DateTimeImmutable $createdAt;
     private ?DateTimeImmutable $updatedAt = null;
 
@@ -31,6 +35,18 @@ class Stop
         $this->createdAt = new DateTimeImmutable();
     }
 
+    public function loadStudent(Child $student): self
+    {
+        $this->student = $student;
+        return $this;
+    }
+
+    public function loadAddress(Address $address): self
+    {
+        $this->address = $address;
+        return $this;
+    }
+
     public function getId(): ?int { return $this->id; }
     public function getAddressId(): int { return $this->fk_address; }
     public function getRouteId(): int { return $this->fk_route; }
@@ -38,6 +54,8 @@ class Stop
     public function getType(): StopType { return $this->type; }
     public function getCreatedAt(): DateTimeImmutable { return $this->createdAt; }
     public function getUpdatedAt(): ?DateTimeImmutable { return $this->updatedAt; }
+    public function getStudent(): ?Child { return $this->student; }
+    public function getAddress(): ?Address { return $this->address; }
 
     public function setId(int $id): self
     {
@@ -60,6 +78,8 @@ class Stop
             'fk_address' => $this->fk_address,
             'fk_route' => $this->fk_route,
             'stop_order' => $this->stop_order,
+            'student' => $this->student?->toArray(),
+            'address' => $this->address?->toArray(),
             'created_at' => $this->createdAt->format('Y-m-d H:i:s'),
             'updated_at' => $this->updatedAt?->format('Y-m-d H:i:s'),
         ];

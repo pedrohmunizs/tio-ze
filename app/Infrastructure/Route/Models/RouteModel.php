@@ -9,6 +9,7 @@ use App\Infrastructure\Provider\Models\ProviderModel;
 use App\Infrastructure\Stop\Models\StopModel;
 use App\Infrastructure\Trip\Models\TripModel;
 use App\Infrastructure\Contract\Models\ContractModel;
+use App\Infrastructure\Driver\Models\DriverModel;
 use App\Infrastructure\TransportRequest\Models\TransportRequestModel;
 
 class RouteModel extends Model
@@ -20,6 +21,7 @@ class RouteModel extends Model
     protected $fillable = [
         'fk_school',
         'fk_provider',
+        'fk_driver',
         'name',
         'price',
         'going_time',
@@ -39,33 +41,26 @@ class RouteModel extends Model
         'deleted_at' => 'datetime',
     ];
 
-    protected $hidden = [
-        // Campos ocultos em respostas JSON
-    ];
-
     protected $dates = [
         'created_at',
         'updated_at',
         'deleted_at',
     ];
 
-    // 👇 RELACIONAMENTOS
+    public function school()
+    {
+        return $this->belongsTo(SchoolModel::class, 'fk_school');
+    }
 
-    /**
-     * Escola da rota
-     */
-    // public function school()
-    // {
-    //     return $this->belongsTo(SchoolModel::class, 'fk_school');
-    // }
+    public function provider()
+    {
+        return $this->belongsTo(ProviderModel::class, 'fk_provider');
+    }
 
-    // /**
-    //  * Provider (prestador) da rota
-    //  */
-    // public function provider()
-    // {
-    //     return $this->belongsTo(ProviderModel::class, 'fk_provider');
-    // }
+    public function driver()
+    {
+        return $this->belongsTo(DriverModel::class, 'fk_driver');
+    }
 
     // /**
     //  * Pontos de parada da rota

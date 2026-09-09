@@ -11,11 +11,13 @@ class DriverMapper
 {
     public static function toDomain(DriverModel $model): Driver
     {
+        $status = DriverStatus::tryFrom($model->status) ?? DriverStatus::PENDING;
+
         $entity = new Driver(
             userId: $model->fk_user,
             providerId: $model->fk_provider,
             isAutonomous: $model->is_autonomous,
-            status: $model->status,
+            status: $status,
             licenseNumber: $model->license_number,
             licenseCategory: $model->license_category,
             licenseValidUntil: $model->license_valid_until,

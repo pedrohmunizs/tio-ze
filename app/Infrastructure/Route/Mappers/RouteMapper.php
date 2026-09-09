@@ -7,7 +7,10 @@ use App\Domain\Route\Enums\RouteStatus;
 use App\Domain\Route\ValueObjects\DaysOfWeek;
 use App\Domain\Route\ValueObjects\Price;
 use App\Domain\Route\ValueObjects\Time;
+use App\Infrastructure\Driver\Mappers\DriverMapper;
+use App\Infrastructure\Provider\Mappers\ProviderMapper;
 use App\Infrastructure\Route\Models\RouteModel;
+use App\Infrastructure\School\Mappers\SchoolMapper;
 use DateTimeImmutable;
 
 class RouteMapper
@@ -19,7 +22,6 @@ class RouteMapper
         $returningTime = new Time($model->returning_time);
         $daysOfWeek = new DaysOfWeek($model->days_of_week);
 
-        // 👇 CRIAR ENTITY
         $entity = new Route(
             name: $model->name,
             price: $price,
@@ -28,9 +30,22 @@ class RouteMapper
             daysOfWeek: $daysOfWeek,
             schoolId: (int) $model->fk_school,
             providerId: (int) $model->fk_provider,
+            driverId: (int) $model->fk_driver,
             status: RouteStatus::from($model->status),
             id: $model->id,
         );
+
+        if ($model->relationLoaded('school') && $model->school) {
+            $entity->loadSchool(SchoolMapper::toDomain($model->school));
+        }
+
+        if ($model->relationLoaded('driver') && $model->driver) {
+            $entity->loadDriver(DriverMapper::toDomain($model->driver));
+        }
+
+        if ($model->relationLoaded('provider') && $model->provider) {
+            $entity->loadProvider(ProviderMapper::toDomain($model->provider));
+        }
 
         $reflection = new \ReflectionClass($entity);
         $statusProperty = $reflection->getProperty('status');
@@ -69,6 +84,7 @@ class RouteMapper
             'days_of_week' => $entity->getDaysOfWeek()->toString(),
             'fk_school' => $entity->getSchoolId(),
             'fk_provider' => $entity->getProviderId(),
+            'fk_driver' => $entity->getDriverId(),
             'status' => $entity->getStatus()->value,
         ];
     }

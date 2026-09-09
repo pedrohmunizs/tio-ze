@@ -3,6 +3,7 @@
 namespace App\Infrastructure\User\Models;
 
 use App\Infrastructure\Address\Models\AddressModel;
+use App\Infrastructure\Driver\Models\DriverModel;
 use App\Infrastructure\Provider\Models\ProviderModel;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -58,10 +59,10 @@ class UserModel extends Authenticatable
         return $this->hasOne(ProviderModel::class, 'fk_user');
     }
 
-    // public function driver()
-    // {
-    //     return $this->hasOne(DriverModel::class, 'fk_user');
-    // }
+    public function driver()
+    {
+        return $this->hasOne(DriverModel::class, 'fk_user');
+    }
 
     // public function deviceTokens()
     // {

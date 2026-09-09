@@ -3,12 +3,9 @@
 namespace App\Infrastructure\Driver\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DriverModel extends Model
 {
-    use SoftDeletes;
-
     protected $table = 'drivers';
 
     protected $fillable = [

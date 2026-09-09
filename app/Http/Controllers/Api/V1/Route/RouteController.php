@@ -8,6 +8,7 @@ use App\Application\Route\UseCases\CreateRouteUseCase;
 use App\Application\Route\UseCases\UpdateRouteUseCase;
 use App\Application\Route\UseCases\DeleteRouteUseCase;
 use App\Application\Route\UseCases\GetRouteUseCase;
+use App\Application\Route\UseCases\OptimizePickupRouteUseCase;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -18,6 +19,7 @@ class RouteController extends Controller
         private UpdateRouteUseCase $updateUseCase,
         private DeleteRouteUseCase $deleteUseCase,
         private GetRouteUseCase $getUseCase,
+        private OptimizePickupRouteUseCase $optimize_route_use_case,
     ) {}
 
     public function index(Request $request): JsonResponse
@@ -44,12 +46,30 @@ class RouteController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        $validated = $request->validate(
-            CreateRouteData::rules(),
-            CreateRouteData::messages()
-        );
-        
+        $request->validate(CreateRouteData::rules(), CreateRouteData::messages());
+
+        $provider = user()->provider;
+            
+        if (!$provider) {
+            throw new \DomainException('Usuário não é um prestador');
+        }
+
+        if ($provider->is_autonomous) {
+            $driver = user()->driver;
+            
+            if (!$driver) {
+                throw new \DomainException('Motorista autônomo não possui perfil de motorista');
+            }
+            
+            $request->merge(['fk_driver' => $driver->id]);
+        } else {
+            if (!$request->input('fk_driver')) {
+                throw new \DomainException('É necessário informar um motorista para esta rota');
+            }
+        }
+
         $data = CreateRouteData::fromRequest($request);
+
         $entity = $this->createUseCase->execute($data);
 
         return response()->json($entity->toArray(), 201);
@@ -74,6 +94,25 @@ class RouteController extends Controller
             return response()->json(null, 204);
         } catch (\RuntimeException $e) {
             return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
+    public function optimize(int $routeId)
+    {
+        try {
+            $types = ['going', 'returning'];
+
+            foreach ($types as $type) {
+                $this->optimize_route_use_case->execute($routeId, $type);
+            }
+
+            return response()->json(['success' => true]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
         }
     }
 }

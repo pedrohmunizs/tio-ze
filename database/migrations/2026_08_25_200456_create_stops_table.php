@@ -18,8 +18,6 @@ return new class extends Migration
             $table->integer('stop_order');
             $table->enum('type', ['going', 'returning']);
             $table->timestamps();
-
-            $table->unique(['fk_route', 'type', 'stop_order']);
         });
     }
 

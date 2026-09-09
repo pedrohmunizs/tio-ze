@@ -12,7 +12,7 @@ class EloquentSchoolRepository implements SchoolRepositoryInterface
 {
     public function findById(int $id): ?School
     {
-        $model = SchoolModel::find($id);
+        $model = SchoolModel::with(['address'])->find($id);
         return $model ? SchoolMapper::toDomain($model) : null;
     }
 
