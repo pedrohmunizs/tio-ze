@@ -54,6 +54,14 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
         Route::put('/routes/{id}', 'update');
         Route::delete('/routes/{id}', 'destroy');
     });
+
+    Route::group(['prefix' => 'vehicles', 'namespace' => 'App\Http\Controllers\Api\V1\Vehicle'], function(){
+        Route::get('/',['uses' => 'VehicleController@index', 'as' => 'vehicles.index'] );
+        Route::get('/{id}',['uses' => 'VehicleController@show', 'as' => 'vehicles.show'] );
+        Route::post('/',['uses' => 'VehicleController@store', 'as' => 'vehicles.store'] );
+        Route::put('/{id}',['uses' => 'VehicleController@update', 'as' => 'vehicles.update'] );
+        Route::delete('/{id}',['uses' => 'VehicleController@destroy', 'as' => 'vehicles.destroy'] );
+    });
 });
 
 // Rota para CSRF (necessário para autenticação stateful)

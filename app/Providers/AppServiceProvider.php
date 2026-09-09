@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Domain\Address\Repositories\AddressRepositoryInterface;
+use App\Infrastructure\Vehicle\Repositories\EloquentVehicleRepository;
+use App\Domain\Vehicle\Repositories\VehicleRepositoryInterface;
 use App\Infrastructure\StopChild\Repositories\EloquentStopChildRepository;
 use App\Domain\StopChild\Repositories\StopChildRepositoryInterface;
 use App\Infrastructure\Stop\Repositories\EloquentStopRepository;
@@ -34,6 +36,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        
         
         
         
@@ -93,6 +96,12 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             StopChildRepositoryInterface::class,
             EloquentStopChildRepository::class
+        );
+    
+        
+        $this->app->bind(
+            VehicleRepositoryInterface::class,
+            EloquentVehicleRepository::class
         );
     }
 
