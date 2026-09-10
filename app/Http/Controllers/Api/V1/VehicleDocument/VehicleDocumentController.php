@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Api\V1\VehicleDocument;
 
 use App\Http\Controllers\Controller;
 use App\Application\VehicleDocument\UseCases\CreateVehicleDocumentUseCase;
-use App\Application\VehicleDocument\UseCases\UpdateVehicleDocumentUseCase;
 use App\Application\VehicleDocument\UseCases\DeleteVehicleDocumentUseCase;
 use App\Application\VehicleDocument\UseCases\GetVehicleDocumentUseCase;
 use App\Application\VehicleDocument\DTOs\CreateVehicleDocumentData;
+use App\Application\VehicleDocument\DTOs\RespondVehicleDocumentData;
+use App\Application\VehicleDocument\UseCases\RespondVehicleDocumentUseCase;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -15,9 +16,9 @@ class VehicleDocumentController extends Controller
 {
     public function __construct(
         private CreateVehicleDocumentUseCase $createUseCase,
-        private UpdateVehicleDocumentUseCase $updateUseCase,
         private DeleteVehicleDocumentUseCase $deleteUseCase,
         private GetVehicleDocumentUseCase $getUseCase,
+        private RespondVehicleDocumentUseCase $respondUseCase,
     ) {}
 
     public function index(Request $request): JsonResponse
@@ -53,25 +54,28 @@ class VehicleDocumentController extends Controller
         );
 
         $data = CreateVehicleDocumentData::fromRequest($request);
-
-        // return response()->json($request, 201);
         
         $entity = $this->createUseCase->execute($data);
 
         return response()->json($entity->toArray(), 201);
     }
 
-    // public function update(Request $request, int $id): JsonResponse
-    // {
-    //     $data = VehicleDocumentData::fromRequest($request);
-        
-    //     try {
-    //         $entity = $this->updateUseCase->execute($id, $data);
-    //         return response()->json($entity->toArray());
-    //     } catch (\RuntimeException $e) {
-    //         return response()->json(['message' => $e->getMessage()], 404);
-    //     }
-    // }
+    public function respond(Request $request, int $id): JsonResponse
+    {
+        $validated = $request->validate(
+            RespondVehicleDocumentData::rules(),
+            RespondVehicleDocumentData::messages()
+        );
+
+        $data = RespondVehicleDocumentData::fromRequest($request);
+
+        try {
+            $entity = $this->respondUseCase->execute($id, $data);
+            return response()->json($entity->toArray());
+        } catch (\RuntimeException $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
 
     public function destroy(int $id): JsonResponse
     {

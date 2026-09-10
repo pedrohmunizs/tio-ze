@@ -61,6 +61,35 @@ class VehicleDocument
         return $this;
     }
 
+    public function isPending(): bool
+    {
+        return $this->status === VehicleDocumentStatus::PENDING;
+    }
+
+    public function isApproved(): bool
+    {
+        return $this->status === VehicleDocumentStatus::APPROVED;
+    }
+
+    public function isRejected(): bool
+    {
+        return $this->status === VehicleDocumentStatus::REJECTED;
+    }
+
+    public function setStatus(string $status): self
+    {
+        $status = VehicleDocumentStatus::fromString($status);
+
+        if ($this->status === $status) {
+            throw new \DomainException("Transport request is already {$status->value}");
+        }
+
+        $this->status = $status;
+        $this->updatedAt = new DateTimeImmutable();
+
+        return $this;
+    }
+
     public function toArray(): array
     {
         return [

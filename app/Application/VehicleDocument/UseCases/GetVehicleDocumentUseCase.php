@@ -22,16 +22,11 @@ class GetVehicleDocumentUseCase
             return null;
         }
 
-        // 2. 👈 GERAR A URL TEMPORÁRIA AQUI
         $temporaryUrl = null;
         if ($document->getFilePath()) {
-            $temporaryUrl = $this->s3Service->getTemporaryUrl(
-                $document->getFilePath(),
-                30 // 30 minutos
-            );
+            $temporaryUrl = $this->s3Service->getTemporaryUrl($document->getFilePath(), 30);
         }
 
-        // 3. Passar a URL para o Mapper
         return VehicleDocumentMapper::toArray($document, $temporaryUrl);
     }
 

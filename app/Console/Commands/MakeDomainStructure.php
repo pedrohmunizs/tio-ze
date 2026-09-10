@@ -76,10 +76,10 @@ class MakeDomainStructure extends Command
         $this->createDto($domain);
         $this->createUseCases($domain);
         $this->createController($domain);
-        $this->createService($domain);
+        // $this->createService($domain);
         $this->createEnum($domain);
-        $this->createFactory($domain);
-        $this->createSeeder($domain, $table);
+        // $this->createFactory($domain);
+        // $this->createSeeder($domain, $table);
 
         // Adicionar ao Service Provider
         $this->registerInServiceProvider($domain);
@@ -509,12 +509,21 @@ class Create{$domain}Data
         return get_object_vars(\$this);
     }
 
-    public function validate(): array
+    public static function rules(): array
     {
         return [
             // Regras de validação
             // 'name' => 'required|string|max:255',
             // 'email' => 'required|email|unique:users,email',
+        ];
+    }
+
+    public static function messages(): array
+    {
+        return [
+            // Mensagens em caso de erro
+            // 'file.required' => 'O nome é obrigatório',
+            // 'email.unique' => 'Esse email já esta cadastrado',
         ];
     }
 }
@@ -717,6 +726,7 @@ class {$domain}Controller extends Controller
 
     public function store(Request \$request): JsonResponse
     {
+        \$request->validate(Create{$domain}Data::rules(), Create{$domain}Data::messages());
         \$data = Create{$domain}Data::fromRequest(\$request);
         \$entity = \$this->createUseCase->execute(\$data);
 
@@ -1234,7 +1244,7 @@ PHP;
             );
             
             File::put($path, $newContent);
-            $this->line("   ✅ Registrado no AppServiceProvider: {$domain}");
+            $this->line("Registrado no AppServiceProvider: {$domain}");
         }
     }
 
@@ -1250,27 +1260,35 @@ PHP;
         }
 
         $content = File::get($path);
-        $routeName = Str::lower(Str::plural($domain));
-        $controllerClass = "App\\Http\\Controllers\\Api\\V1\\{$domain}\\{$domain}Controller";
+        $routeName = Str::kebab(Str::plural($domain));
+        $controllerClass = "App\\Http\\Controllers\\Api\\V1\\{$domain}";
+        $controllerName = "{$domain}Controller";
+
+        if (str_contains($content, "{$routeName}")) {
+            return;
+        }
 
         $routes = <<<PHP
 
-// {$domain} Routes
-Route::prefix('v1')->group(function () {
-    Route::controller({$controllerClass}::class)->group(function () {
-        Route::get('/{$routeName}', 'index');
-        Route::get('/{$routeName}/{id}', 'show');
-        Route::post('/{$routeName}', 'store');
-        Route::put('/{$routeName}/{id}', 'update');
-        Route::delete('/{$routeName}/{id}', 'destroy');
-    });
-});
-PHP;
+            // {$domain} Routes
+            Route::group(['prefix' => '{$routeName}', 'namespace' => '{$controllerClass}'], function(){
+                Route::get('/',['uses' => '{$controllerName}@index', 'as' => '{$routeName}.index'] );
+                Route::get('/{id}',['uses' => '{$controllerName}@show', 'as' => '{$routeName}.show'] );
+                Route::post('/',['uses' => '{$controllerName}@store', 'as' => '{$routeName}.store'] );
+                Route::put('/{id}/update',['uses' => '{$controllerName}@update', 'as' => '{$routeName}.update'] );
+                Route::delete('/{id}',['uses' => '{$controllerName}@destroy', 'as' => '{$routeName}.destroy'] );
+            });
+        PHP;
 
-        // Verificar se já existe
-        if (!str_contains($content, "{$routeName}")) {
-            File::append($path, $routes);
-            $this->line("   Rotas registradas em routes/api.php");
+        $pattern = '/Route::middleware\(\'auth:sanctum\'\)->prefix\(\'v1\'\)->group\(function \(\) \{(.*?)\n\}\);/s';
+
+        if (preg_match($pattern, $content, $matches)) {
+            $newContent = str_replace($matches[1], $matches[1] . "\n" . $routes, $content);
+            
+            File::put($path, $newContent);
+            $this->line("Rotas registradas em routes/api.php");
+        } else {
+            $this->warn("Grupo auth:sanctum não encontrado. Rotas não foram adicionadas.");
         }
     }
 }

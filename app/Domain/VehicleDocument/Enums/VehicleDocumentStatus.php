@@ -21,4 +21,14 @@ enum VehicleDocumentStatus: string
     {
         return array_column(self::cases(), 'value');
     }
+
+    public static function fromString(string $status): self
+    {
+        return match($status) {
+            'pending' => self::PENDING,
+            'approved' => self::APPROVED,
+            'rejected' => self::REJECTED,
+            default => throw new \InvalidArgumentException("Invalid status: {$status}"),
+        };
+    }
 }

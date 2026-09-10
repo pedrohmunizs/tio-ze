@@ -32,15 +32,6 @@ class CreateVehicleDocumentData
         return [
             'fk_vehicle' => 'required|numeric',
             'type' => 'required|in:registration, insurance, inspection, other',
-            // 'file' => [
-            //     'required',
-            //     'file',
-            //     'image',
-            //     'max:5120',
-            //     'mimes:jpeg,png,jpg,gif',
-            //     'dimensions:min_width=100,min_height=100',
-            // ]
-
             'file' => [
                 'required',
                 'file',
@@ -54,7 +45,6 @@ class CreateVehicleDocumentData
     {
         return [
             'file.required' => 'A imagem do documento é obrigatória',
-            // 'file.image' => 'O arquivo deve ser uma imagem',
             'file.max' => 'A imagem não pode ter mais que 10MB',
             'file.mimes' => 'A imagem deve ser JPEG, PNG, JPG ou GIF',
             'type.required' => 'Indique qual é o documento',
