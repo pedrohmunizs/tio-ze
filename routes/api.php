@@ -70,6 +70,15 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
         Route::put('/{id}/response',['uses' => 'VehicleDocumentController@respond', 'as' => 'vehicle-documents.respond'] );
         Route::delete('/{id}',['uses' => 'VehicleDocumentController@destroy', 'as' => 'vehicle-documents.destroy'] );
     });
+
+    // DriverDocument Routes
+    Route::group(['prefix' => 'driver-documents', 'namespace' => 'App\Http\Controllers\Api\V1\DriverDocument'], function(){
+        Route::get('/',['uses' => 'DriverDocumentController@index', 'as' => 'driver-documents.index'] );
+        Route::get('/{id}',['uses' => 'DriverDocumentController@show', 'as' => 'driver-documents.show'] );
+        Route::post('/',['uses' => 'DriverDocumentController@store', 'as' => 'driver-documents.store'] );
+        Route::put('/{id}/response',['uses' => 'DriverDocumentController@respond', 'as' => 'driver-documents.respond'] );
+        Route::delete('/{id}',['uses' => 'DriverDocumentController@destroy', 'as' => 'driver-documents.destroy'] );
+    });
 });
 
 // Rota para CSRF (necessário para autenticação stateful)
