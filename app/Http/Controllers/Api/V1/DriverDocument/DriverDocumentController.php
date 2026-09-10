@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Api\V1\DriverDocument;
 
 use App\Http\Controllers\Controller;
 use App\Application\DriverDocument\UseCases\CreateDriverDocumentUseCase;
-use App\Application\DriverDocument\UseCases\UpdateDriverDocumentUseCase;
 use App\Application\DriverDocument\UseCases\DeleteDriverDocumentUseCase;
 use App\Application\DriverDocument\UseCases\GetDriverDocumentUseCase;
 use App\Application\DriverDocument\DTOs\CreateDriverDocumentData;
+use App\Application\DriverDocument\DTOs\RespondDriverDocumentData;
+use App\Application\DriverDocument\UseCases\RespondDriverDocumentUseCase;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -17,6 +18,7 @@ class DriverDocumentController extends Controller
         private CreateDriverDocumentUseCase $createUseCase,
         private DeleteDriverDocumentUseCase $deleteUseCase,
         private GetDriverDocumentUseCase $getUseCase,
+        private RespondDriverDocumentUseCase $respondUseCase,
     ) {}
 
     public function index(Request $request): JsonResponse
@@ -47,6 +49,18 @@ class DriverDocumentController extends Controller
         $entity = $this->createUseCase->execute($data);
 
         return response()->json($entity->toArray(), 201);
+    }
+
+    public function respond(Request $request, int $id): JsonResponse
+    {
+        $data = RespondDriverDocumentData::fromRequest($request);
+
+        try {
+            $entity = $this->respondUseCase->execute($id, $data);
+            return response()->json($entity->toArray());
+        } catch (\RuntimeException $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
     }
 
     public function destroy(int $id): JsonResponse

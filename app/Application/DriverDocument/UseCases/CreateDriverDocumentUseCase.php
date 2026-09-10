@@ -7,7 +7,6 @@ use App\Domain\DriverDocument\Repositories\DriverDocumentRepositoryInterface;
 use App\Application\DriverDocument\DTOs\CreateDriverDocumentData;
 use App\Domain\DriverDocument\Enums\DriverDocumentType;
 use App\Services\S3Service;
-use Carbon\Carbon;
 
 class CreateDriverDocumentUseCase
 {
@@ -29,8 +28,6 @@ class CreateDriverDocumentUseCase
 
             $fk_driver = $driver->id;
         }
-
-        // dd();
 
         $file_path = $this->s3Service->upload($data->file, 'driver-documents');
 
