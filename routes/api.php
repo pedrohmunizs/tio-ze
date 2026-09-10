@@ -62,6 +62,22 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
         Route::put('/{id}',['uses' => 'VehicleController@update', 'as' => 'vehicles.update'] );
         Route::delete('/{id}',['uses' => 'VehicleController@destroy', 'as' => 'vehicles.destroy'] );
     });
+
+    Route::group(['prefix' => 'vehicle-documents', 'namespace' => 'App\Http\Controllers\Api\V1\VehicleDocument'], function(){
+        Route::get('/',['uses' => 'VehicleDocumentController@index', 'as' => 'vehicle-documents.index'] );
+        Route::get('/{id}',['uses' => 'VehicleDocumentController@show', 'as' => 'vehicle-documents.show'] );
+        Route::post('/',['uses' => 'VehicleDocumentController@store', 'as' => 'vehicle-documents.store'] );
+        Route::put('/{id}',['uses' => 'VehicleDocumentController@update', 'as' => 'vehicle-documents.update'] );
+        Route::delete('/{id}',['uses' => 'VehicleDocumentController@destroy', 'as' => 'vehicle-documents.destroy'] );
+    });
+
+    // Route::controller(App\Http\Controllers\Api\V1\VehicleDocument\VehicleDocumentController::class)->group(function () {
+    //     Route::get('/vehicle-documents', 'index');
+    //     Route::get('/vehicle-documents/{id}', 'show');
+    //     Route::post('/vehicle-documents', 'store');
+    //     Route::put('/vehicle-documents/{id}', 'update');
+    //     Route::delete('/vehicle-documents/{id}', 'destroy');
+    // });
 });
 
 // Rota para CSRF (necessário para autenticação stateful)
