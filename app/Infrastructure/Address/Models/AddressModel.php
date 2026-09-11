@@ -6,9 +6,12 @@ use App\Infrastructure\Child\Models\ChildModel;
 use App\Infrastructure\School\Models\SchoolModel;
 use App\Infrastructure\User\Models\UserModel;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class AddressModel extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'addresses';
 
     protected $fillable = [
@@ -36,6 +39,7 @@ class AddressModel extends Model
     protected $dates = [
         'created_at',
         'updated_at',
+        'deleted_at'
     ];
 
     public function user()
