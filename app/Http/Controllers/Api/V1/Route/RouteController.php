@@ -46,30 +46,7 @@ class RouteController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        $request->validate(CreateRouteData::rules(), CreateRouteData::messages());
-
-        $provider = user()->provider;
-            
-        if (!$provider) {
-            throw new \DomainException('Usuário não é um prestador');
-        }
-
-        if ($provider->is_autonomous) {
-            $driver = user()->driver;
-            
-            if (!$driver) {
-                throw new \DomainException('Motorista autônomo não possui perfil de motorista');
-            }
-            
-            $request->merge(['fk_driver' => $driver->id]);
-        } else {
-            if (!$request->input('fk_driver')) {
-                throw new \DomainException('É necessário informar um motorista para esta rota');
-            }
-        }
-
         $data = CreateRouteData::fromRequest($request);
-
         $entity = $this->createUseCase->execute($data);
 
         return response()->json($entity->toArray(), 201);

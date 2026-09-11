@@ -19,15 +19,15 @@ class CreateRouteUseCase
 
     public function execute(CreateRouteData $data): Route
     {
-        if (!$this->schoolRepository->findById($data->school_id)) {
-            throw new \DomainException('School not found');
-        }
+        $this->validateSchool($data->school_id);
 
         $provider_id = user()->provider->id;
 
         if ($this->repository->existsByProviderAndName($provider_id, $data->name)) {
             throw new \DomainException('Route already exists for this provider');
         }
+
+        $fk_driver = $this->resolveDriverId($data);
 
         $price = new Price($data->price);
         $goingTime = new Time($data->going_time);
@@ -42,10 +42,53 @@ class CreateRouteUseCase
             daysOfWeek: $daysOfWeek,
             schoolId: $data->school_id,
             providerId: $provider_id,
-            driverId: $data->driver_id,
+            driverId: $fk_driver,
         );
 
         $this->repository->save($entity);
         return $entity;
+    }
+
+    private function resolveDriverId(CreateRouteData $data): int
+    {
+        $user = user();
+        $provider = $user->provider;
+
+        if (!$provider) {
+            throw new \DomainException('Usuário não é um prestador');
+        }
+
+        if ($provider->is_autonomous) {
+            $driver = $user->driver;
+            
+            if (!$driver) {
+                throw new \DomainException('Motorista autônomo não possui perfil de motorista');
+            }
+
+            if ($driver->status != 'active') {
+                throw new \DomainException('O motorista não está ativo.');
+            }
+            
+            return $driver->id;
+        }
+
+        if (!$data->driver_id) {
+            throw new \DomainException('É necessário informar um motorista para esta rota');
+        }
+
+        return $data->driver_id;
+    }
+
+    private function validateSchool(int $school_id): void
+    {
+        $school = $this->schoolRepository->findById($school_id);
+
+        if (!$school) {
+            throw new \DomainException('School not found');
+        }
+
+        if (!$school->isActive()) {
+            throw new \DomainException('A escola não está ativa.');
+        }
     }
 }

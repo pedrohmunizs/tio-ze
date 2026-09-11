@@ -80,16 +80,6 @@ class School
         return $this;
     }
 
-    public function isActive(): bool
-    {
-        return $this->status === SchoolStatus::ACTIVE;
-    }
-
-    public function isDeleted(): bool
-    {
-        return $this->deletedAt !== null;
-    }
-
     public function activate(): void
     {
         if ($this->status === SchoolStatus::ACTIVE) {
@@ -121,6 +111,9 @@ class School
     public function getAddressId(): ?int { return $this->addressId; }
     public function getCreatedAt(): DateTimeImmutable { return $this->createdAt; }
     public function getUpdatedAt(): ?DateTimeImmutable { return $this->updatedAt; }
+    public function getDeletedAt(): ?DateTimeImmutable { return $this->deletedAt; }
+    public function isActive(): bool { return $this->status === SchoolStatus::ACTIVE; }
+    public function isDeleted(): bool { return $this->deletedAt !== null; }
     public function getAddress(): ?Address { return $this->address; }
 
     public function setId(int $id): self
@@ -133,11 +126,6 @@ class School
     {
         $this->updatedAt = $updatedAt;
         return $this;
-    }
-
-    public function getDeletedAt(): ?DateTimeImmutable
-    {
-        return $this->deletedAt;
     }
 
     public function setDeletedAt(?DateTimeImmutable $deletedAt): self

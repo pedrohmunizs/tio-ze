@@ -19,6 +19,8 @@ class CreateRouteData
 
     public static function fromRequest(Request $request): self
     {
+        $request->validate(self::rules(), self::messages());
+        
         return new self(
             name: $request->input('name'),
             price: (float) $request->input('price'),

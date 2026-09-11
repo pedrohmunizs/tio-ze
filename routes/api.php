@@ -46,13 +46,12 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
         Route::delete('/transport-requests/{id}', 'destroy');
     });
 
-    Route::controller(App\Http\Controllers\Api\V1\Route\RouteController::class)->group(function () {
-        Route::get('/routes', 'index');
-        Route::get('/routes/{id}', 'show');
-        Route::post('/routes', 'store');
-        Route::put('/routes/{id}/optimize', 'optimize');
-        Route::put('/routes/{id}', 'update');
-        Route::delete('/routes/{id}', 'destroy');
+    Route::group(['prefix' => 'routes', 'namespace' => 'App\Http\Controllers\Api\V1\Route'], function(){
+        Route::get('/',['uses' => 'RouteController@index', 'as' => 'routes.index'] );
+        Route::get('/{id}',['uses' => 'RouteController@show', 'as' => 'routes.show'] );
+        Route::post('/',['uses' => 'RouteController@store', 'as' => 'routes.store'] );
+        Route::put('/{id}/optimize',['uses' => 'RouteController@optimize', 'as' => 'routes.optimize'] );
+        Route::delete('/{id}',['uses' => 'RouteController@destroy', 'as' => 'routes.destroy'] );
     });
 
     Route::group(['prefix' => 'vehicles', 'namespace' => 'App\Http\Controllers\Api\V1\Vehicle'], function(){

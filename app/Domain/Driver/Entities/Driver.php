@@ -54,6 +54,10 @@ class Driver
     public function getUserId(): ?int { return $this->userId; }
     public function getCreatedAt(): DateTimeImmutable { return $this->createdAt; }
     public function getUpdatedAt(): ?DateTimeImmutable { return $this->updatedAt; }
+    public function isPending(): bool { return $this->status === DriverStatus::PENDING; }
+    public function isActive(): bool { return $this->status === DriverStatus::ACTIVE; }
+    public function isInactive(): bool { return $this->status === DriverStatus::INACTIVE; }
+    public function isSuspended(): bool { return $this->status === DriverStatus::SUSPENDED; }
 
     public function getUser(): ?User
     {
