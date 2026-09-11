@@ -42,12 +42,6 @@ class DriverMapper
             $updatedAtProperty->setValue($entity, new DateTimeImmutable($model->updated_at));
         }
 
-        if ($model->deleted_at) {
-            $deletedAtProperty = $reflection->getProperty('deletedAt');
-            $deletedAtProperty->setAccessible(true);
-            $deletedAtProperty->setValue($entity, new DateTimeImmutable($model->deleted_at));
-        }
-
         return $entity;
     }
 

@@ -21,7 +21,6 @@ class Driver
     private ?User $user = null;
     private ?DateTimeImmutable $createdAt;
     private ?DateTimeImmutable $updatedAt = null;
-    private ?DateTimeImmutable $deletedAt = null;
 
     public function __construct(
         int $userId,
@@ -88,14 +87,17 @@ class Driver
         return $this;
     }
 
-    public function getDeletedAt(): ?DateTimeImmutable
+    public function setStatus(string $status): self
     {
-        return $this->deletedAt;
-    }
+        $status = DriverStatus::fromString($status);
 
-    public function setDeletedAt(?DateTimeImmutable $deletedAt): self
-    {
-        $this->deletedAt = $deletedAt;
+        if ($this->status === $status) {
+            throw new \DomainException("Driver is already {$status->value}");
+        }
+
+        $this->status = $status;
+        $this->updatedAt = new DateTimeImmutable();
+
         return $this;
     }
 
@@ -113,7 +115,6 @@ class Driver
             'fk_user' => $this->userId,
             'created_at' => $this->createdAt->format('Y-m-d H:i:s'),
             'updated_at' => $this->updatedAt?->format('Y-m-d H:i:s'),
-            'deleted_at' => $this->deletedAt?->format('Y-m-d H:i:s'),
         ];
     }
 }

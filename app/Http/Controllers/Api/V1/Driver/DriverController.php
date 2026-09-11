@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Api\V1\Driver;
 
+use App\Application\Driver\DTOs\ChangeStatusDriverData;
 use App\Http\Controllers\Controller;
 use App\Application\Driver\UseCases\UpdateDriverUseCase;
 use App\Application\Driver\UseCases\DeleteDriverUseCase;
 use App\Application\Driver\UseCases\GetDriverUseCase;
 use App\Application\Driver\DTOs\UpdateDriverData;
+use App\Application\Driver\UseCases\ChangeStatusDriverUseCase;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -16,6 +18,7 @@ class DriverController extends Controller
         private UpdateDriverUseCase $updateUseCase,
         private DeleteDriverUseCase $deleteUseCase,
         private GetDriverUseCase $getUseCase,
+        private ChangeStatusDriverUseCase $changeStatusUseCase,
     ) {}
 
     public function index(Request $request): JsonResponse
@@ -46,6 +49,18 @@ class DriverController extends Controller
         
         try {
             $entity = $this->updateUseCase->execute($id, $data);
+            return response()->json($entity->toArray());
+        } catch (\RuntimeException $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
+    public function changeStatus(int $id, Request $request): JsonResponse
+    {
+        $data = ChangeStatusDriverData::fromRequest($request);
+        
+        try {
+            $entity = $this->changeStatusUseCase->execute($id, $data);
             return response()->json($entity->toArray());
         } catch (\RuntimeException $e) {
             return response()->json(['message' => $e->getMessage()], 404);

@@ -7,7 +7,7 @@ enum DriverStatus: string
     case ACTIVE = 'active';
     case INACTIVE = 'inactive';
     case PENDING = 'pending';
-    case BLOCKED = 'blocked';
+    case SUSPENDED = 'suspended';
 
     public function label(): string
     {
@@ -15,7 +15,7 @@ enum DriverStatus: string
             self::ACTIVE => 'Ativo',
             self::INACTIVE => 'Inativo',
             self::PENDING => 'Pendente',
-            self::BLOCKED => 'Bloqueado',
+            self::SUSPENDED => 'Bloqueado',
         };
     }
 
@@ -25,12 +25,23 @@ enum DriverStatus: string
             self::ACTIVE => 'green',
             self::INACTIVE => 'gray',
             self::PENDING => 'yellow',
-            self::BLOCKED => 'red',
+            self::SUSPENDED => 'red',
         };
     }
 
     public static function toArray(): array
     {
         return array_column(self::cases(), 'value');
+    }
+
+    public static function fromString(string $status): self
+    {
+        return match($status) {
+            'active' => self::ACTIVE,
+            'inactive' => self::INACTIVE,
+            'pending' => self::PENDING,
+            'suspended' => self::SUSPENDED,
+            default => throw new \InvalidArgumentException("Invalid status: {$status}"),
+        };
     }
 }
