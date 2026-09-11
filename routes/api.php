@@ -79,6 +79,15 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
         Route::put('/{id}/response',['uses' => 'DriverDocumentController@respond', 'as' => 'driver-documents.respond'] );
         Route::delete('/{id}',['uses' => 'DriverDocumentController@destroy', 'as' => 'driver-documents.destroy'] );
     });
+
+    // Driver Routes
+    Route::group(['prefix' => 'drivers', 'namespace' => 'App\Http\Controllers\Api\V1\Driver'], function(){
+        Route::get('/',['uses' => 'DriverController@index', 'as' => 'drivers.index'] );
+        Route::get('/{id}',['uses' => 'DriverController@show', 'as' => 'drivers.show'] );
+        Route::post('/',['uses' => 'DriverController@store', 'as' => 'drivers.store'] );
+        Route::put('/{id}',['uses' => 'DriverController@update', 'as' => 'drivers.update'] );
+        Route::delete('/{id}',['uses' => 'DriverController@destroy', 'as' => 'drivers.destroy'] );
+    });
 });
 
 // Rota para CSRF (necessário para autenticação stateful)
@@ -103,16 +112,6 @@ Route::prefix('v1')->group(function () {
         Route::post('/providers', 'store');
         Route::put('/providers/{id}', 'update');
         Route::delete('/providers/{id}', 'destroy');
-    });
-});
-// Driver Routes
-Route::prefix('v1')->group(function () {
-    Route::controller(App\Http\Controllers\Api\V1\Driver\DriverController::class)->group(function () {
-        Route::get('/drivers', 'index');
-        Route::get('/drivers/{id}', 'show');
-        Route::post('/drivers', 'store');
-        Route::put('/drivers/{id}', 'update');
-        Route::delete('/drivers/{id}', 'destroy');
     });
 });
 // Contract Routes

@@ -3,18 +3,16 @@
 namespace App\Http\Controllers\Api\V1\Driver;
 
 use App\Http\Controllers\Controller;
-use App\Application\Driver\UseCases\CreateDriverUseCase;
 use App\Application\Driver\UseCases\UpdateDriverUseCase;
 use App\Application\Driver\UseCases\DeleteDriverUseCase;
 use App\Application\Driver\UseCases\GetDriverUseCase;
-use App\Application\Driver\DTOs\DriverData;
+use App\Application\Driver\DTOs\UpdateDriverData;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class DriverController extends Controller
 {
     public function __construct(
-        private CreateDriverUseCase $createUseCase,
         private UpdateDriverUseCase $updateUseCase,
         private DeleteDriverUseCase $deleteUseCase,
         private GetDriverUseCase $getUseCase,
@@ -42,17 +40,9 @@ class DriverController extends Controller
         return response()->json($entity->toArray());
     }
 
-    public function store(Request $request): JsonResponse
-    {
-        $data = DriverData::fromRequest($request);
-        $entity = $this->createUseCase->execute($data);
-
-        return response()->json($entity->toArray(), 201);
-    }
-
     public function update(Request $request, int $id): JsonResponse
     {
-        $data = DriverData::fromRequest($request);
+        $data = UpdateDriverData::fromRequest($request);
         
         try {
             $entity = $this->updateUseCase->execute($id, $data);

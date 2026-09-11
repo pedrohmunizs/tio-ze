@@ -66,6 +66,16 @@ class Driver
         return $this->user;
     }
 
+    public function update(string $license_number, string $license_category, string $license_valid_until): self
+    {
+        $this->licenseNumber = $license_number;
+        $this->licenseCategory = $license_category;
+        $this->licenseValidUntil = $license_valid_until;
+        $this->updatedAt = new DateTimeImmutable();
+
+        return $this;
+    }
+
     public function setId(int $id): self
     {
         $this->id = $id;
