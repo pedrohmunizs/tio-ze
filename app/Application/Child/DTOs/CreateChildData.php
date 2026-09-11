@@ -8,23 +8,23 @@ class CreateChildData
 {
     public function __construct(
         public readonly string $name,
-        public readonly ?string $phone,
         public readonly string $grade,
         public readonly string $zip_code,
         public readonly string $street,
         public readonly string $number,
-        public readonly ?string $complement = null,
         public readonly string $neighborhood,
         public readonly string $city,
         public readonly string $state,
-        public readonly ?float $latitude = null,
-        public readonly ?float $longitude = null,
-        public readonly ?int $fk_parent = null,
         public readonly string $fk_school,
+        public readonly ?string $phone = null,
+        public readonly ?int $fk_parent = null,
+        public readonly ?string $complement = null,
     ) {}
 
     public static function fromRequest(Request $request): self
     {
+        $request->validate(self::rules(), self::messages());
+
         return new self(
             name: $request->input('name'),
             grade: $request->input('grade'),
@@ -36,8 +36,6 @@ class CreateChildData
             neighborhood: $request->input('neighborhood'),
             city: $request->input('city'),
             state: $request->input('state'),
-            latitude: $request->input('latitude') ? (float) $request->input('latitude') : null,
-            longitude: $request->input('longitude') ? (float) $request->input('longitude') : null,
             fk_parent: $request->input('fk_parent'),
             fk_school: $request->input('fk_school'),
         );
@@ -48,23 +46,39 @@ class CreateChildData
         return get_object_vars($this);
     }
 
-    public function validate(): array
+    public static function rules(): array
     {
         return [
             'name' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
             'grade' => 'required|string|max:255',
-            'zip_code' => 'nullable|string|max:10',
-            'street' => 'nullable|string|max:255',
-            'number' => 'nullable|string|max:20',
+            'zip_code' => 'required|string|max:10',
+            'street' => 'required|string|max:255',
+            'number' => 'required|string|max:20',
             'complement' => 'nullable|string|max:255',
-            'neighborhood' => 'nullable|string|max:255',
-            'city' => 'nullable|string|max:255',
-            'state' => 'nullable|string|size:2',
-            'latitude' => 'nullable|numeric|between:-90,90',
-            'longitude' => 'nullable|numeric|between:-180,180',
+            'neighborhood' => 'required|string|max:255',
+            'city' => 'required|string|max:255',
+            'state' => 'required|string|size:2',
             'fk_parent' => 'nullable|numeric',
             'fk_school' => 'required|numeric',
+        ];
+    }
+
+    public static function messages(): array
+    {
+        return [
+            'name.required' => 'O nome da rota é obrigatório',
+            'phone.required' => 'O telefone é obrigatório',
+            'phone.max' => 'Número detelefone muito grande',
+            'grade.required' => 'A turma/série do aluno é obrigatório',
+            'fk_school.required' => 'A escola é obrigatória',
+            'zip_code.required' => 'o CEP é obrigatório',
+            'street.required' => 'A rua é obrigatória',
+            'number.required' => 'O número é obrigatório',
+            'neighborhood.required' => 'O bairro é obrigatório',
+            'city.required' => 'A cidade é obrigatória',
+            'state.required' => 'O estado é obrigatório',
+            'state.max' => 'Utilize somente duas letras',
         ];
     }
 }

@@ -44,21 +44,6 @@ class ChildController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'grade' => 'required|string|max:20',
-            'phone' => 'nullable|string|max:20',
-            'fk_school' => 'required|numeric',
-            'fk_parent' => 'nullable|numeric',
-            'zip_code' => 'required|string|max:255',
-            'street' => 'required|string|max:255',
-            'number' => 'required|string|max:255',
-            'neighborhood' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
-            'state' => 'required|string|max:2',
-        ]);
-
-
         $data = CreateChildData::fromRequest($request);
         $entity = $this->createUseCase->execute($data);
 
