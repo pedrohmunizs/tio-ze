@@ -4,6 +4,7 @@ namespace App\Infrastructure\Child\Mappers;
 
 use App\Domain\Child\Entities\Child;
 use App\Domain\Child\Enums\ChildStatus;
+use App\Infrastructure\Address\Mappers\AddressMapper;
 use App\Infrastructure\Child\Models\ChildModel;
 use DateTimeImmutable;
 
@@ -11,6 +12,10 @@ class ChildMapper
 {
     public static function toDomain(ChildModel $model): Child
     {
+        if (!$model->relationLoaded('address')) {
+            $model->load('address');
+        }
+
         $entity = new Child(
             name: $model->name,
             phone: $model->phone,
@@ -20,6 +25,10 @@ class ChildMapper
             schoolId: $model->fk_school,
             id: $model->id
         );
+
+        if ($model->relationLoaded('address') && $model->address) {
+            $entity->loadAddress(AddressMapper::toDomain($model->address));
+        }
 
         $reflection = new \ReflectionClass($entity);
         $statusProperty = $reflection->getProperty('status');

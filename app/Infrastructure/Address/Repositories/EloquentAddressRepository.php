@@ -35,7 +35,8 @@ class EloquentAddressRepository implements AddressRepositoryInterface
 
     public function delete(int $id): void
     {
-        AddressModel::destroy($id);
+        $address = $this->findById($id);
+        $address->delete();
     }
 
     public function exists(int $id): bool

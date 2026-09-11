@@ -136,6 +136,12 @@ class Child
         $this->updatedAt = new DateTimeImmutable();
     }
 
+    public function loadAddress(Address $address): self
+    {
+        $this->address = $address;
+        return $this;
+    }
+
     public function getId(): ?int { return $this->id; }
     public function getName(): string { return $this->name; }
     public function getGrade(): string { return $this->grade; }
@@ -146,16 +152,7 @@ class Child
     public function getParentId(): ?int { return $this->parentId; }
     public function getCreatedAt(): DateTimeImmutable { return $this->createdAt; }
     public function getUpdatedAt(): ?DateTimeImmutable { return $this->updatedAt; }
-
-    public function getAddress(): ?Address
-    {
-        if ($this->address === null && $this->addressId) {
-            $repository = App::make(AddressRepositoryInterface::class);
-            $this->address = $repository->findById($this->addressId);
-        }
-        
-        return $this->address;
-    }
+    public function getAddress(): ?Address { return $this->address; }
 
     public function setId(int $id): self
     {
@@ -190,6 +187,7 @@ class Child
             'status' => $this->status->value,
             'status_label' => $this->status->label(),
             'address_id' => $this->addressId,
+            'address' => $this->address?->toArray(),
             'parent_id' => $this->parentId,
             'school_id' => $this->schoolId,
             'created_at' => $this->createdAt->format('Y-m-d H:i:s'),

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Child;
 
 use App\Application\Child\DTOs\CreateChildData;
+use App\Application\Child\DTOs\UpdateChildData;
 use App\Http\Controllers\Controller;
 use App\Application\Child\UseCases\CreateChildUseCase;
 use App\Application\Child\UseCases\UpdateChildUseCase;
@@ -50,17 +51,17 @@ class ChildController extends Controller
         return response()->json($entity->toArray(), 201);
     }
 
-    // public function update(Request $request, int $id): JsonResponse
-    // {
-    //     $data = ChildData::fromRequest($request);
+    public function update(Request $request, int $id): JsonResponse
+    {
+        $data = UpdateChildData::fromRequest($request);
         
-    //     try {
-    //         $entity = $this->updateUseCase->execute($id, $data);
-    //         return response()->json($entity->toArray());
-    //     } catch (\RuntimeException $e) {
-    //         return response()->json(['message' => $e->getMessage()], 404);
-    //     }
-    // }
+        try {
+            $entity = $this->updateUseCase->execute($id, $data);
+            return response()->json($entity->toArray());
+        } catch (\RuntimeException $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
 
     public function destroy(int $id): JsonResponse
     {

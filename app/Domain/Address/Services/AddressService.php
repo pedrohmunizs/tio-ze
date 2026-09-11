@@ -10,7 +10,7 @@ use App\Helpers\AddressHelper;
 class AddressService
 {
     public function __construct(
-        private AddressRepositoryInterface $addressRepository,
+        private AddressRepositoryInterface $repository,
     ) {}
 
     public function createAddressFromData(
@@ -33,15 +33,20 @@ class AddressService
             zipCode: $zipCode,
             street: $street ?? $geocodeData['street'] ?? null,
             number: $number,
-            complement: $complement,
             neighborhood: $neighborhood ?? $geocodeData['neighborhood'] ?? null,
             city: $city ?? $geocodeData['city'] ?? null,
             state: $state ?? $geocodeData['state'] ?? null,
+            complement: $complement,
             latitude: $geocodeData['latitude'] ?? null,
             longitude: $geocodeData['longitude'] ?? null,
             locationType: GeocodeLocationType::fromString($geocodeData['location_type'] ?? null),
         );
 
-        return $this->addressRepository->save($address);
+        return $this->repository->save($address);
+    }
+
+    public function delete(int $id): void
+    {
+        $this->repository->delete($id);
     }
 }

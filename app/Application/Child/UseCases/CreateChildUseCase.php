@@ -19,7 +19,7 @@ class CreateChildUseCase
 
     public function execute(CreateChildData $data): Child
     {
-        $parent_id = $this->resolveProviderId($data->fk_parent);
+        $parent_id = $this->resolveParentId($data->fk_parent);
         $this->validateSchool($data->fk_school);
 
         $address_id = $this->address_service->createAddressFromData(
@@ -45,7 +45,7 @@ class CreateChildUseCase
         return $entity;
     }
 
-    private function resolveProviderId(int $parent_id): int
+    private function resolveParentId(int $parent_id): int
     {
         if ($parent_id) {
             $parent = UserModel::find($parent_id);
