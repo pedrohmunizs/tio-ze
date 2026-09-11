@@ -129,8 +129,7 @@ class {$dtoName}
 
     public function toArray(): array
     {
-        return [
-{$toArrayItems}        ];
+        return get_object_vars(\$this);
     }
 
     public static function rules(): array

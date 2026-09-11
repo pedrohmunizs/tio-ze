@@ -59,7 +59,7 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
         Route::get('/',['uses' => 'VehicleController@index', 'as' => 'vehicles.index'] );
         Route::get('/{id}',['uses' => 'VehicleController@show', 'as' => 'vehicles.show'] );
         Route::post('/',['uses' => 'VehicleController@store', 'as' => 'vehicles.store'] );
-        Route::put('/{id}',['uses' => 'VehicleController@update', 'as' => 'vehicles.update'] );
+        Route::put('/{id}/change-status',['uses' => 'VehicleController@changeStatus', 'as' => 'vehicles.change-status'] );
         Route::delete('/{id}',['uses' => 'VehicleController@destroy', 'as' => 'vehicles.destroy'] );
     });
 

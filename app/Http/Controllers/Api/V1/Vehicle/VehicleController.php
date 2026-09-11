@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Api\V1\Vehicle;
 
+use App\Application\Vehicle\DTOs\ChangeStatusVehicleData;
 use App\Http\Controllers\Controller;
 use App\Application\Vehicle\UseCases\CreateVehicleUseCase;
 use App\Application\Vehicle\UseCases\UpdateVehicleUseCase;
 use App\Application\Vehicle\UseCases\DeleteVehicleUseCase;
 use App\Application\Vehicle\UseCases\GetVehicleUseCase;
+use App\Application\Vehicle\UseCases\ChangeStatusVehicleUseCase;
 use App\Application\Vehicle\DTOs\CreateVehicleData;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -18,6 +20,7 @@ class VehicleController extends Controller
         private UpdateVehicleUseCase $updateUseCase,
         private DeleteVehicleUseCase $deleteUseCase,
         private GetVehicleUseCase $getUseCase,
+        private ChangeStatusVehicleUseCase $changeStatusUseCase,
     ) {}
 
     public function index(Request $request): JsonResponse
@@ -53,6 +56,18 @@ class VehicleController extends Controller
         $entity = $this->createUseCase->execute($data);
 
         return response()->json($entity->toArray(), 201);
+    }
+
+    public function changeStatus(int $id, Request $request): JsonResponse
+    {
+        $data = ChangeStatusVehicleData::fromRequest($request);
+
+        try {
+            $entity = $this->changeStatusUseCase->execute($id, $data);
+            return response()->json($entity->toArray());
+        } catch (\RuntimeException $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
     }
 
     // public function update(Request $request, int $id): JsonResponse

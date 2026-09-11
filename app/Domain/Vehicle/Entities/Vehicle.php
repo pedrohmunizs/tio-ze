@@ -83,6 +83,20 @@ class Vehicle
         return $this;
     }
 
+    public function setStatus(string $status): self
+    {
+        $status = VehicleStatus::fromString($status);
+
+        if ($this->status === $status) {
+            throw new \DomainException("Vehicle is already {$status->value}");
+        }
+
+        $this->status = $status;
+        $this->updatedAt = new DateTimeImmutable();
+
+        return $this;
+    }
+
     public function toArray(): array
     {
         return [

@@ -21,4 +21,14 @@ enum VehicleStatus: string
     {
         return array_column(self::cases(), 'value');
     }
+
+    public static function fromString(string $status): self
+    {
+        return match($status) {
+            'active' => self::ACTIVE,
+            'inactive' => self::INACTIVE,
+            'maintenance' => self::MAINTENANCE,
+            default => throw new \InvalidArgumentException("Invalid status: {$status}"),
+        };
+    }
 }
