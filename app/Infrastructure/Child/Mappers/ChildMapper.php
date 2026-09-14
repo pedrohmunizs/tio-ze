@@ -6,6 +6,7 @@ use App\Domain\Child\Entities\Child;
 use App\Domain\Child\Enums\ChildStatus;
 use App\Infrastructure\Address\Mappers\AddressMapper;
 use App\Infrastructure\Child\Models\ChildModel;
+use App\Infrastructure\StopChild\Mappers\StopChildMapper;
 use DateTimeImmutable;
 
 class ChildMapper
@@ -14,6 +15,7 @@ class ChildMapper
     {
         if (!$model->relationLoaded('address')) {
             $model->load('address');
+            $model->load('stopChildren');
         }
 
         $entity = new Child(
@@ -28,6 +30,16 @@ class ChildMapper
 
         if ($model->relationLoaded('address') && $model->address) {
             $entity->loadAddress(AddressMapper::toDomain($model->address));
+        }
+
+        if ($model->relationLoaded('stopChildren') && $model->stopChildren->isNotEmpty()) {
+            $stopChildren = $model->stopChildren
+                ->map(fn($stopChild) => StopChildMapper::toArray(
+                    StopChildMapper::toDomain($stopChild)
+                ))
+                ->toArray();
+
+            $entity->loadStopChildren($stopChildren);
         }
 
         $reflection = new \ReflectionClass($entity);

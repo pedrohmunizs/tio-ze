@@ -55,6 +55,7 @@ class StopMapper
     public static function toArray(Stop $entity): array
     {
         return [
+            'id' => $entity->getId(),
             'fk_route' => $entity->getRouteId(),
             'fk_address' => $entity->getAddressId(),
             'stop_order' => $entity->getStopOrder(),

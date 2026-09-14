@@ -92,4 +92,15 @@ class EloquentStopChildRepository implements StopChildRepositoryInterface
 
         return $query->count();
     }
+
+    public function deleteByStopIdAndChildId(int $fk_stop, int $fk_child): void
+    {
+        StopChildModel::where('fk_stop', $fk_stop)->where('fk_child', $fk_child)->delete();
+    }
+
+    public function getMaxOrder(int $fk_stop): int
+    {
+        $max = StopChildModel::where('fk_stop', $fk_stop)->max('stop_order');
+        return $max ?? 0;
+    }
 }

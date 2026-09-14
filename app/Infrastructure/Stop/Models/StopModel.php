@@ -19,14 +19,9 @@ class StopModel extends Model
         'type' => 'string'
     ];
 
-    protected $hidden = [
-        // Adicione os campos ocultos aqui
-    ];
-
     protected $dates = [
         'created_at',
         'updated_at',
-        'deleted_at',
     ];
 
     public function address()
@@ -41,14 +36,7 @@ class StopModel extends Model
 
     public function student()
     {
-        return $this->hasOneThrough(
-            ChildModel::class,          // Modelo final
-            StopChildModel::class,      // Modelo intermediário
-            'fk_stop',                  // Chave estrangeira no intermediário
-            'id',                       // Chave local no final
-            'id',                       // Chave local no atual
-            'fk_child'                  // Chave estrangeira no intermediário para o final
-        );
+        return $this->hasOneThrough(ChildModel::class, StopChildModel::class, 'fk_stop', 'id', 'id', 'fk_child');
     }
 
     public function children()

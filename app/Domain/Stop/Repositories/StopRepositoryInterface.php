@@ -16,6 +16,8 @@ interface StopRepositoryInterface
     public function exists(int $id): bool;
     public function count(array $filters = []): int;
     public function findByRouteId(int $fk_route, string $type) : array;
-    public function updateOrder(int $fk_student, int $stop_order, int $fk_route, string $type): void;
+    public function updateOrder(int $id, int $stop_order): void;
     public function getMaxOrder(int $fk_route, string $type): int;
+    public function findByChildId(int $fk_child): array;
+    public function existsStopByAddress(int $fk_route, string $zip_code, string $number, string $type): ?int;
 }

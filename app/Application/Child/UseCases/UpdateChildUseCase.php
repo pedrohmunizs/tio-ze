@@ -7,6 +7,7 @@ use App\Domain\Child\Repositories\ChildRepositoryInterface;
 use App\Application\Child\DTOs\UpdateChildData;
 use App\Domain\Address\Services\AddressService;
 use App\Domain\School\Repositories\SchoolRepositoryInterface;
+use App\Domain\Stop\Services\StopService;
 
 class UpdateChildUseCase
 {
@@ -14,6 +15,7 @@ class UpdateChildUseCase
         private ChildRepositoryInterface $repository,
         private AddressService $address_service,
         private SchoolRepositoryInterface $schoolRepository,
+        private StopService $stop_service,
     ) {}
 
     public function execute(int $id, UpdateChildData $data): Child
@@ -27,6 +29,8 @@ class UpdateChildUseCase
         $this->validateSchool($data->fk_school);
         $address_id = $this->updateAddress($data, $entity);
         
+        $this->updateAddress($data, $entity);
+
         $entity->update(
             name: $data->name,
             phone: $data->phone,
@@ -77,6 +81,8 @@ class UpdateChildUseCase
             $data->state,
             $data->complement,
         );
+
+        $this->stop_service->resolveStopsChild($child->getId(), $address_id, $dto_zip_code, $data->number);
 
         return $address_id;
     }

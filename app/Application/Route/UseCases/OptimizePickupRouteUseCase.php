@@ -33,12 +33,12 @@ class OptimizePickupRouteUseCase
 
         foreach ($stops as $stop) {
             $student = $stop['student'];
-            
+
             if (!$student) {
                 continue;
             }
 
-            $address = $student['address'];
+            $address = $stop['address'];
             
             if (!$address) {
                 continue;
@@ -83,7 +83,7 @@ class OptimizePickupRouteUseCase
         }
 
         foreach ($optimized['students'] as $student) {
-            $this->stopRepository->updateOrder($student['student_id'], $student['order'], $fk_route, $type);
+            $this->stopRepository->updateOrder($student['stop_id'], $student['order']);
         }
 
         return $optimized;

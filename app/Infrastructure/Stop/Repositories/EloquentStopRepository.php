@@ -106,14 +106,9 @@ class EloquentStopRepository implements StopRepositoryInterface
             ->toArray();
     }
 
-    public function updateOrder(int $fk_student, int $stop_order, int $fk_route, string $type): void
+    public function updateOrder(int $id, int $stop_order): void
     {
-        $stop = StopModel::where('fk_route', $fk_route)
-            ->where('type', $type)
-            ->whereHas('stopChildren', function ($query) use ($fk_student) {
-                $query->where('fk_child', $fk_student);
-            })
-            ->first();
+        $stop = StopModel::find($id);
 
         if ($stop) {
             $stop->update(['stop_order' => $stop_order]);
@@ -124,5 +119,30 @@ class EloquentStopRepository implements StopRepositoryInterface
     {
         $max = StopModel::where('fk_route', $fk_route)->where('type', $type)->max('stop_order');
         return $max ?? 0;
+    }
+
+    public function findByChildId(int $fk_child): array
+    {
+        return StopModel::with(['stopChildren', 'address'])
+            ->whereHas('stopChildren', function ($query) use ($fk_child) {
+                $query->where('fk_child', $fk_child);
+            })
+            ->get()
+            ->map(fn($model) => StopMapper::toArray(
+                StopMapper::toDomain($model)
+            ))
+            ->toArray();
+    }
+
+    public function existsStopByAddress(int $fk_route, string $zip_code, string $number, string $type): ?int
+    {
+        $stop = StopModel::where('fk_route', $fk_route)
+            ->where('type', $type)
+            ->whereHas('address', function ($query) use ($zip_code, $number) {
+                $query->where('zip_code', $zip_code)
+                      ->where('number', $number);
+            })->first();
+        
+        return $stop ? $stop->id : null;
     }
 }

@@ -14,4 +14,6 @@ interface StopChildRepositoryInterface
     public function delete(int $id): void;
     public function exists(int $id): bool;
     public function count(array $filters = []): int;
+    public function deleteByStopIdAndChildId(int $fk_stop, int $fk_child): void;
+    public function getMaxOrder(int $fk_stop): int;
 }

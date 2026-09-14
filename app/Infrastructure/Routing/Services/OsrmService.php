@@ -82,7 +82,7 @@ class OsrmService
                 'longitude' => $student['address']['longitude'],
                 'type' => 'student',
                 'name' => $student['name'],
-                'student_id' => $student['id'],
+                'stop_id' => $student['stop_id'],
                 'original_index' => $index,
             ];
         }
@@ -135,7 +135,7 @@ class OsrmService
 
             if ($point && $point['type'] === 'student') {
                 $order[] = [
-                    'student_id' => $point['student_id'],
+                    'stop_id' => $point['stop_id'],
                     'name' => $point['name'],
                     'latitude' => $point['latitude'],
                     'longitude' => $point['longitude'],

@@ -4,7 +4,6 @@ namespace App\Application\StopChild\UseCases;
 
 use App\Domain\StopChild\Entities\StopChild;
 use App\Domain\StopChild\Repositories\StopChildRepositoryInterface;
-use App\Application\StopChild\DTOs\CreateStopChildData;
 
 class CreateStopChildUseCase
 {
@@ -12,10 +11,16 @@ class CreateStopChildUseCase
         private StopChildRepositoryInterface $repository
     ) {}
 
-    public function execute(CreateStopChildData $data): StopChild
+    public function execute(int $fk_stop, int $fk_child, int $stop_order): StopChild
     {
-        $entity = new StopChild($data->toArray());
+        $entity = new StopChild(
+            fk_stop: $fk_stop,
+            fk_child: $fk_child,
+            stop_order: $stop_order,
+        );
+
         $this->repository->save($entity);
+
         return $entity;
     }
 }

@@ -3,10 +3,8 @@
 namespace App\Domain\Child\Entities;
 
 use App\Domain\Address\Entities\Address;
-use App\Domain\Address\Repositories\AddressRepositoryInterface;
 use App\Domain\Child\Enums\ChildStatus;
 use DateTimeImmutable;
-use Illuminate\Support\Facades\App;
 
 class Child
 {
@@ -19,6 +17,7 @@ class Child
     private ?int $parentId;
     private ?int $schoolId;
     private ?Address $address = null;
+    private array $stop_children = [];
     private ?DateTimeImmutable $createdAt;
     private ?DateTimeImmutable $updatedAt = null;
     private ?DateTimeImmutable $deletedAt = null;
@@ -142,6 +141,12 @@ class Child
         return $this;
     }
 
+    public function loadStopChildren(array $stop_children): self
+    {
+        $this->stop_children = $stop_children;
+        return $this;
+    }
+
     public function getId(): ?int { return $this->id; }
     public function getName(): string { return $this->name; }
     public function getGrade(): string { return $this->grade; }
@@ -153,6 +158,7 @@ class Child
     public function getCreatedAt(): DateTimeImmutable { return $this->createdAt; }
     public function getUpdatedAt(): ?DateTimeImmutable { return $this->updatedAt; }
     public function getAddress(): ?Address { return $this->address; }
+    public function getStopChildren(): array { return $this->stop_children; }
 
     public function setId(int $id): self
     {
