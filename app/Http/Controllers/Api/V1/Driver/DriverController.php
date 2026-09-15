@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Api\V1\Driver;
 
 use App\Application\Driver\DTOs\ChangeStatusDriverData;
+use App\Application\Driver\DTOs\UpdateAddressDriverData;
 use App\Http\Controllers\Controller;
 use App\Application\Driver\UseCases\UpdateDriverUseCase;
 use App\Application\Driver\UseCases\DeleteDriverUseCase;
 use App\Application\Driver\UseCases\GetDriverUseCase;
 use App\Application\Driver\DTOs\UpdateDriverData;
 use App\Application\Driver\UseCases\ChangeStatusDriverUseCase;
+use App\Application\Driver\UseCases\UpdateAddressDriverUseCase;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -19,6 +21,7 @@ class DriverController extends Controller
         private DeleteDriverUseCase $deleteUseCase,
         private GetDriverUseCase $getUseCase,
         private ChangeStatusDriverUseCase $changeStatusUseCase,
+        private UpdateAddressDriverUseCase $update_address_use_case,
     ) {}
 
     public function index(Request $request): JsonResponse
@@ -50,6 +53,18 @@ class DriverController extends Controller
         try {
             $entity = $this->updateUseCase->execute($id, $data);
             return response()->json($entity->toArray());
+        } catch (\RuntimeException $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
+    public function updateAddress(Request $request, int $id) : JsonResponse
+    {
+        $data = UpdateAddressDriverData::fromRequest($request);
+        
+        try {
+            $entity = $this->update_address_use_case->execute($id, $data);
+            return response()->json($entity->getRoutes());
         } catch (\RuntimeException $e) {
             return response()->json(['message' => $e->getMessage()], 404);
         }

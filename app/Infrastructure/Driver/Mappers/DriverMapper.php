@@ -5,12 +5,17 @@ namespace App\Infrastructure\Driver\Mappers;
 use App\Domain\Driver\Entities\Driver;
 use App\Domain\Driver\Enums\DriverStatus;
 use App\Infrastructure\Driver\Models\DriverModel;
+use App\Infrastructure\Route\Mappers\RouteMapper;
 use DateTimeImmutable;
 
 class DriverMapper
 {
     public static function toDomain(DriverModel $model): Driver
     {
+        if (!$model->relationLoaded('routes')) {
+            $model->load('routes');
+        }
+
         $status = DriverStatus::tryFrom($model->status) ?? DriverStatus::PENDING;
 
         $entity = new Driver(
@@ -23,6 +28,16 @@ class DriverMapper
             licenseValidUntil: $model->license_valid_until,
             id: $model->id
         );
+
+        if ($model->relationLoaded('routes') && $model->routes->isNotEmpty()) {
+            $routes = $model->routes
+                ->map(fn($route) => RouteMapper::toArray(
+                    RouteMapper::toDomain($route)
+                ))
+                ->toArray();
+
+            $entity->loadRoutes($routes);
+        }
 
         $reflection = new \ReflectionClass($entity);
         $statusProperty = $reflection->getProperty('status');

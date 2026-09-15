@@ -13,15 +13,7 @@ class AddressService
         private AddressRepositoryInterface $repository,
     ) {}
 
-    public function createAddressFromData(
-        string $zipCode, 
-        string $street, 
-        string $number, 
-        string $neighborhood, 
-        string $city, 
-        string $state,
-        ?string $complement = null
-    ): ?int 
+    public function createAddressFromData(string $zipCode,  string $street,  string $number,  string $neighborhood,  string $city,  string $state, ?string $complement = null): ?int 
     {
         if (!$zipCode) {
             return null;

@@ -77,6 +77,7 @@ class RouteMapper
     public static function toArray(Route $entity): array
     {
         return [
+            'id' => $entity->getId(),
             'name' => $entity->getName(),
             'price' => $entity->getPrice()->getValue(),
             'going_time' => $entity->getGoingTime()->getValue(),

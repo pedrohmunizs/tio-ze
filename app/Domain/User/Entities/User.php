@@ -106,7 +106,7 @@ class User
     public function getAddressId(): ?int { return $this->addressId; }
     public function getCreatedAt(): DateTimeImmutable { return $this->createdAt; }
     public function getUpdatedAt(): ?DateTimeImmutable { return $this->updatedAt; }
-    // public function getDeletedAt(): ?DateTimeImmutable { return $this->deletedAt; }
+    public function getDeletedAt(): ?DateTimeImmutable { return $this->deletedAt; }
 
     public function getAddress(): ?Address
     {
@@ -133,6 +133,14 @@ class User
     public function setDeletedAt(?DateTimeImmutable $deletedAt): self
     {
         $this->deletedAt = $deletedAt;
+        return $this;
+    }
+
+    public function setAddressId(int $fk_address): self
+    {
+        $this->addressId = $fk_address;
+        $this->updatedAt = new DateTimeImmutable();
+
         return $this;
     }
 

@@ -19,6 +19,7 @@ class Driver
     private int $userId;
     private int $providerId;
     private ?User $user = null;
+    private array $routes = [];
     private ?DateTimeImmutable $createdAt;
     private ?DateTimeImmutable $updatedAt = null;
 
@@ -44,6 +45,12 @@ class Driver
         $this->createdAt = new DateTimeImmutable();
     }
 
+    public function loadRoutes(array $routes): self
+    {
+        $this->routes = $routes;
+        return $this;
+    }
+
     public function getId(): ?int { return $this->id; }
     public function getLicenseNumber(): ?string { return $this->licenseNumber; }
     public function getLicenseCategory(): ?string { return $this->licenseCategory; }
@@ -54,6 +61,7 @@ class Driver
     public function getUserId(): ?int { return $this->userId; }
     public function getCreatedAt(): DateTimeImmutable { return $this->createdAt; }
     public function getUpdatedAt(): ?DateTimeImmutable { return $this->updatedAt; }
+    public function getRoutes(): array { return $this->routes; }
     public function isPending(): bool { return $this->status === DriverStatus::PENDING; }
     public function isActive(): bool { return $this->status === DriverStatus::ACTIVE; }
     public function isInactive(): bool { return $this->status === DriverStatus::INACTIVE; }

@@ -85,6 +85,7 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
         Route::get('/{id}',['uses' => 'DriverController@show', 'as' => 'drivers.show'] );
         Route::post('/',['uses' => 'DriverController@store', 'as' => 'drivers.store'] );
         Route::put('/{id}/change-status',['uses' => 'DriverController@changeStatus', 'as' => 'drivers.change-status'] );
+        Route::put('/{id}/update-address',['uses' => 'DriverController@updateAddress', 'as' => 'drivers.update-address'] );
         Route::put('/{id}',['uses' => 'DriverController@update', 'as' => 'drivers.update'] );
         Route::delete('/{id}',['uses' => 'DriverController@destroy', 'as' => 'drivers.destroy'] );
     });

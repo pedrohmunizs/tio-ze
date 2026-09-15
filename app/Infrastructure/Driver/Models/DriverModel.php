@@ -2,6 +2,7 @@
 
 namespace App\Infrastructure\Driver\Models;
 
+use App\Infrastructure\Route\Models\RouteModel;
 use App\Infrastructure\User\Models\UserModel;
 use Illuminate\Database\Eloquent\Model;
 
@@ -32,5 +33,10 @@ class DriverModel extends Model
     public function user()
     {
         return $this->belongsTo(UserModel::class, 'fk_user');
+    }
+
+    public function routes()
+    {
+        return $this->hasMany(RouteModel::class, 'fk_driver');
     }
 }
