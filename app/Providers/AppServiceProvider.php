@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Domain\Address\Repositories\AddressRepositoryInterface;
+use App\Infrastructure\Trip\Repositories\EloquentTripRepository;
+use App\Domain\Trip\Repositories\TripRepositoryInterface;
 use App\Infrastructure\DriverDocument\Repositories\EloquentDriverDocumentRepository;
 use App\Domain\DriverDocument\Repositories\DriverDocumentRepositoryInterface;
 use App\Infrastructure\VehicleDocument\Repositories\EloquentVehicleDocumentRepository;
@@ -40,6 +42,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        
         $this->app->bind(
             UserRepositoryInterface::class,
             EloquentUserRepository::class
@@ -113,6 +116,12 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             DriverDocumentRepositoryInterface::class,
             EloquentDriverDocumentRepository::class
+        );
+    
+        
+        $this->app->bind(
+            TripRepositoryInterface::class,
+            EloquentTripRepository::class
         );
     }
 

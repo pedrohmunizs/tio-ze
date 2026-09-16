@@ -89,6 +89,16 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
         Route::put('/{id}',['uses' => 'DriverController@update', 'as' => 'drivers.update'] );
         Route::delete('/{id}',['uses' => 'DriverController@destroy', 'as' => 'drivers.destroy'] );
     });
+
+    // Trip Routes
+    Route::group(['prefix' => 'trips', 'namespace' => 'App\Http\Controllers\Api\V1\Trip'], function(){
+        Route::get('/generate',['uses' => 'TripController@generate', 'as' => 'trips.generate'] );
+        Route::get('/',['uses' => 'TripController@index', 'as' => 'trips.index'] );
+        Route::get('/{id}',['uses' => 'TripController@show', 'as' => 'trips.show'] );
+        Route::post('/',['uses' => 'TripController@store', 'as' => 'trips.store'] );
+        Route::put('/{id}/update',['uses' => 'TripController@update', 'as' => 'trips.update'] );
+        Route::delete('/{id}',['uses' => 'TripController@destroy', 'as' => 'trips.destroy'] );
+    });
 });
 
 // Rota para CSRF (necessário para autenticação stateful)
