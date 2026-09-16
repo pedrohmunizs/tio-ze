@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('fk_school')->constrained('schools')->onDelete('cascade');
             $table->foreignId('fk_provider')->constrained('providers')->onDelete('cascade');
             $table->foreignId('fk_driver')->constrained('drivers')->onDelete('cascade');
+            $table->foreignId('fk_vehicle')->constrained('vehicles')->onDelete('cascade');
             $table->string('name');
             $table->decimal('price', 10, 2);
             $table->time('going_time');

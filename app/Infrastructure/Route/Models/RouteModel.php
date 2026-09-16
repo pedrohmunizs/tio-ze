@@ -22,6 +22,7 @@ class RouteModel extends Model
         'fk_school',
         'fk_provider',
         'fk_driver',
+        'fk_vehicle',
         'name',
         'price',
         'going_time',

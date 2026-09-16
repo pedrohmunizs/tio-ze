@@ -14,6 +14,7 @@ class CreateRouteData
         public readonly array $days_of_week,
         public readonly int $school_id,
         public readonly ?int $driver_id = null,
+        public readonly int $vehicle_id,
         public readonly string $status = 'active',
     ) {}
 
@@ -29,6 +30,7 @@ class CreateRouteData
             days_of_week: $request->input('days_of_week', []),
             school_id: (int) $request->input('fk_school'),
             driver_id: $request->input('fk_driver') ? (int) $request->input('fk_driver') : null,
+            vehicle_id: $request->input('fk_vehicle'),
             status: $request->input('status', 'active'),
         );
     }
@@ -43,6 +45,7 @@ class CreateRouteData
             'days_of_week' => is_array($this->days_of_week) ? implode(',', $this->days_of_week) : $this->days_of_week,
             'fk_school' => $this->school_id,
             'fk_driver' => $this->driver_id,
+            'fk_vehicle' => $this->vehicle_id,
             'status' => $this->status,
         ];
     }
@@ -58,6 +61,7 @@ class CreateRouteData
             'days_of_week.*' => 'in:MON,TUE,WED,THU,FRI,SAT,SUN',
             'fk_school' => 'required|exists:schools,id',
             'fk_driver' => 'nullable|exists:drivers,id',
+            'fk_vehicle' => 'required|exists:vehicles,id',
             'status' => 'nullable|in:active,inactive',
         ];
     }
@@ -74,6 +78,9 @@ class CreateRouteData
             'days_of_week.required' => 'Selecione pelo menos um dia da semana',
             'fk_school.exists' => 'Escola não encontrada',
             'fk_driver.exists' => 'Motorista não encontrado',
+            'fk_vehicle.exists' => 'Veículo não encontrado',
+            'fk_vehicle.required' => 'O veículo é obrigatório',
+            'fk_school.required' => 'A escola é obrigatória',
         ];
     }
 }

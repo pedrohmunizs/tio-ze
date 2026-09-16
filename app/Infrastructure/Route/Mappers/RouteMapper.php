@@ -31,6 +31,7 @@ class RouteMapper
             schoolId: (int) $model->fk_school,
             providerId: (int) $model->fk_provider,
             driverId: (int) $model->fk_driver,
+            vehicleId: (int) $model->fk_vehicle,
             status: RouteStatus::from($model->status),
             id: $model->id,
         );
@@ -82,10 +83,11 @@ class RouteMapper
             'price' => $entity->getPrice()->getValue(),
             'going_time' => $entity->getGoingTime()->getValue(),
             'returning_time' => $entity->getReturningTime()->getValue(),
-            'days_of_week' => $entity->getDaysOfWeek()->toString(),
+            'days_of_week' => $entity->getDaysOfWeek()->toArray(),
             'fk_school' => $entity->getSchoolId(),
             'fk_provider' => $entity->getProviderId(),
             'fk_driver' => $entity->getDriverId(),
+            'fk_vehicle' => $entity->getVehicleId(),
             'status' => $entity->getStatus()->value,
         ];
     }

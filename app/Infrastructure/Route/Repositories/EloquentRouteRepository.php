@@ -50,7 +50,7 @@ class EloquentRouteRepository implements RouteRepositoryInterface
     public function findManyByField(string $field, mixed $value): array
     {
         $models = RouteModel::where($field, $value)->get();
-        return $models->map(fn($model) => RouteMapper::toDomain($model))->toArray();
+        return $models->map(fn($model) => RouteMapper::toArray(RouteMapper::toDomain($model)))->toArray();
     }
 
     public function save(Route $entity): void

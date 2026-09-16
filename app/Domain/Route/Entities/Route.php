@@ -12,6 +12,7 @@ use App\Domain\Route\ValueObjects\Time;
 use App\Domain\Route\ValueObjects\Price;
 use App\Domain\School\Entities\School;
 use App\Domain\School\Repositories\SchoolRepositoryInterface;
+use App\Domain\Vehicle\Entities\Vehicle;
 use DateTimeImmutable;
 use Illuminate\Support\Facades\App;
 
@@ -26,10 +27,12 @@ class Route
     private int $schoolId;
     private int $providerId;
     private int $driverId;
+    private int $vehicleId;
     private RouteStatus $status;
     private ?Driver $driver = null;
     private ?School $school = null;
     private ?Provider $provider = null;
+    private ?Vehicle $vehicle = null;
     private DateTimeImmutable $createdAt;
     private ?DateTimeImmutable $updatedAt;
     private ?DateTimeImmutable $deletedAt;
@@ -43,6 +46,7 @@ class Route
         int $schoolId,
         int $providerId,
         int $driverId,
+        int $vehicleId,
         RouteStatus $status = RouteStatus::ACTIVE,
         ?int $id = null,
     ) {
@@ -56,6 +60,7 @@ class Route
         $this->schoolId = $schoolId;
         $this->providerId = $providerId;
         $this->driverId = $driverId;
+        $this->vehicleId = $vehicleId;
         $this->status = $status;
         $this->id = $id;
         $this->createdAt = new DateTimeImmutable();
@@ -182,6 +187,12 @@ class Route
         return $this;
     }
 
+    public function loadVehicle(Vehicle $vehicle): self
+    {
+        $this->vehicle = $vehicle;
+        return $this;
+    }
+
     public function getId(): ?int { return $this->id; }
     public function getName(): string { return $this->name; }
     public function getPrice(): Price { return $this->price; }
@@ -195,6 +206,7 @@ class Route
     public function getSchoolId(): int { return $this->schoolId; }
     public function getProviderId(): int { return $this->providerId; }
     public function getDriverId(): int { return $this->driverId; }
+    public function getVehicleId(): int { return $this->vehicleId; }
     public function getStatus(): RouteStatus { return $this->status; }
     public function getCreatedAt(): DateTimeImmutable { return $this->createdAt; }
     public function getUpdatedAt(): ?DateTimeImmutable { return $this->updatedAt; }
@@ -202,6 +214,7 @@ class Route
     public function getSchool(): ?School { return $this->school; }
     public function getDriver(): ?Driver { return $this->driver; }
     public function getProvider(): ?Provider { return $this->provider; }
+    public function getVehicle(): ?Vehicle { return $this->vehicle; }
 
     public function setId(int $id): self
     {
@@ -246,6 +259,7 @@ class Route
             'driver' => $this->driver?->toArray(),
             'provider_id' => $this->providerId,
             'driver_id' => $this->driverId,
+            'vehicle_id' => $this->vehicleId,
             'created_at' => $this->createdAt->format('Y-m-d H:i:s'),
             'updated_at' => $this->updatedAt?->format('Y-m-d H:i:s'),
             'deleted_at' => $this->deletedAt?->format('Y-m-d H:i:s'),

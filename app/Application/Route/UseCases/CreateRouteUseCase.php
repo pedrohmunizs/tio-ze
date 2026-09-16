@@ -43,6 +43,7 @@ class CreateRouteUseCase
             schoolId: $data->school_id,
             providerId: $provider_id,
             driverId: $fk_driver,
+            vehicleId: $data->vehicle_id,
         );
 
         $this->repository->save($entity);
