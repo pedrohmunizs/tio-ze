@@ -14,7 +14,14 @@ class CreateTripUseCase
 
     public function execute(CreateTripData $data): Trip
     {
-        $entity = new Trip($data->toArray());
+        $entity = new Trip(
+            fk_route: $data->fk_route,
+            fk_vehicle: $data->fk_vehicle,
+            fk_driver: $data->fk_driver,
+            date: $data->date,
+            type: $data->type
+        );
+        
         $this->repository->save($entity);
         return $entity;
     }

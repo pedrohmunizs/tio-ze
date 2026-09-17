@@ -53,6 +53,18 @@ class EloquentChildRepository implements ChildRepositoryInterface
         return $models->map(fn($model) => ChildMapper::toDomain($model))->toArray();
     }
 
+    public function findByRouteId(int $routeId): array
+    {
+        return ChildModel::with(['address', 'school', 'stopChildren'])
+            ->whereHas('stopChildren.stop', function ($query) use ($routeId) {
+                $query->where('fk_route', $routeId);
+            })
+            ->get()
+            ->map(fn($model) => ChildMapper::toDomain($model))
+            // ->map(fn($model) => ChildMapper::toModel(ChildMapper::toDomain($model)))
+            ->toArray();
+    }
+
     public function save(Child $entity): void
     {
         $data = ChildMapper::toArray($entity);

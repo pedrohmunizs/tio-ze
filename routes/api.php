@@ -99,6 +99,15 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
         Route::put('/{id}/update',['uses' => 'TripController@update', 'as' => 'trips.update'] );
         Route::delete('/{id}',['uses' => 'TripController@destroy', 'as' => 'trips.destroy'] );
     });
+
+    // TripStudent Routes
+    Route::group(['prefix' => 'trip-students', 'namespace' => 'App\Http\Controllers\Api\V1\TripStudent'], function(){
+        Route::get('/',['uses' => 'TripStudentController@index', 'as' => 'trip-students.index'] );
+        Route::get('/{id}',['uses' => 'TripStudentController@show', 'as' => 'trip-students.show'] );
+        Route::post('/',['uses' => 'TripStudentController@store', 'as' => 'trip-students.store'] );
+        Route::put('/{id}/update',['uses' => 'TripStudentController@update', 'as' => 'trip-students.update'] );
+        Route::delete('/{id}',['uses' => 'TripStudentController@destroy', 'as' => 'trip-students.destroy'] );
+    });
 });
 
 // Rota para CSRF (necessário para autenticação stateful)

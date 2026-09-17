@@ -1,35 +1,24 @@
 <?php
 
-namespace App\Application\Trip\DTOs;
+namespace App\Application\TripStudent\DTOs;
 
-use App\Domain\Trip\Enums\TripType;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 
-class CreateTripData
+class CreateTripStudentData
 {
     public function __construct(
-        public readonly int $fk_route,
-        public readonly int $fk_vehicle,
-        public readonly int $fk_driver,
-        public readonly Carbon $date,
-        public readonly TripType $type,
+        public readonly int $fk_trip,
+        public readonly int $fk_student,
     ) {}
 
     public static function fromRequest(
-        int $fk_route,
-        int $fk_vehicle,
-        int $fk_driver,
-        Carbon $date,
-        TripType $type,
+        int $fk_trip,
+        int $fk_student
     ): self
     {
         return new self(
-            fk_route: $fk_route,
-            fk_vehicle: $fk_vehicle,
-            fk_driver: $fk_driver,
-            date: $date,
-            type: $type,
+            fk_trip: $fk_trip,
+            fk_student: $fk_student
         );
     }
 
