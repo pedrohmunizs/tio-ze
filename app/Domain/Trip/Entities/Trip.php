@@ -106,6 +106,12 @@ class Trip
         return $this;
     }
 
+    public function setDriverId(int $fk_driver): self
+    {
+        $this->fk_driver = $fk_driver;
+        return $this;
+    }
+
     public function toArray(): array
     {
         return [

@@ -228,6 +228,12 @@ class Route
         return $this;
     }
 
+    public function setDriverId(int $fk_driver): self
+    {
+        $this->driverId = $fk_driver;
+        return $this;
+    }
+
     public function setCreatedAt(DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;

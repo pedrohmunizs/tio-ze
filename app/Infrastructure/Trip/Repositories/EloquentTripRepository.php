@@ -54,6 +54,12 @@ class EloquentTripRepository implements TripRepositoryInterface
         return $models->map(fn($model) => TripMapper::toDomain($model))->toArray();
     }
 
+    public function findByRouteIdWhereStatusScheduled(int $fk_route): array
+    {
+        $models = TripModel::where('status', 'scheduled')->where('fk_route', $fk_route)->get();
+        return $models->map(fn($model) => TripMapper::toDomain($model))->toArray();
+    }
+
     public function save(Trip $entity): void
     {
         $data = TripMapper::toArray($entity);

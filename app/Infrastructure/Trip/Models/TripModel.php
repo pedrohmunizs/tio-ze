@@ -18,9 +18,11 @@ class TripModel extends Model
     protected $casts = [
         'status' => 'string',
         'type' => 'string',
+        'date' => 'date',
     ];
 
     protected $dates = [
+        'date',
         'started_at',
         'completed_at',
         'created_at',
