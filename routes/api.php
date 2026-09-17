@@ -51,6 +51,7 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
         Route::get('/{id}',['uses' => 'RouteController@show', 'as' => 'routes.show'] );
         Route::post('/',['uses' => 'RouteController@store', 'as' => 'routes.store'] );
         Route::put('/{id}/optimize',['uses' => 'RouteController@optimize', 'as' => 'routes.optimize'] );
+        Route::put('/{id}/change-vehicle',['uses' => 'RouteController@changeVehicle', 'as' => 'routes.change-vehicle'] );
         Route::delete('/{id}',['uses' => 'RouteController@destroy', 'as' => 'routes.destroy'] );
     });
 

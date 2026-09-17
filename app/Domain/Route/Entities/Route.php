@@ -222,6 +222,12 @@ class Route
         return $this;
     }
 
+    public function setVehicleId(int $fk_vehicle): self
+    {
+        $this->vehicleId = $fk_vehicle;
+        return $this;
+    }
+
     public function setCreatedAt(DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;

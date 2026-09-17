@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Api\V1\Route;
 
+use App\Application\Route\DTOs\ChangeVehicleRouteData;
 use App\Application\Route\DTOs\CreateRouteData;
+use App\Application\Route\UseCases\ChangeVehicleRouteUseCase;
 use App\Http\Controllers\Controller;
 use App\Application\Route\UseCases\CreateRouteUseCase;
-use App\Application\Route\UseCases\UpdateRouteUseCase;
 use App\Application\Route\UseCases\DeleteRouteUseCase;
 use App\Application\Route\UseCases\GetRouteUseCase;
 use App\Application\Route\UseCases\OptimizePickupRouteUseCase;
@@ -16,9 +17,9 @@ class RouteController extends Controller
 {
     public function __construct(
         private CreateRouteUseCase $createUseCase,
-        private UpdateRouteUseCase $updateUseCase,
         private DeleteRouteUseCase $deleteUseCase,
         private GetRouteUseCase $getUseCase,
+        private ChangeVehicleRouteUseCase $change_vehicle_route_use_case,
         private OptimizePickupRouteUseCase $optimize_route_use_case,
     ) {}
 
@@ -52,23 +53,23 @@ class RouteController extends Controller
         return response()->json($entity->toArray(), 201);
     }
 
-    // public function update(Request $request, int $id): JsonResponse
-    // {
-    //     $data = RouteData::fromRequest($request);
-        
-    //     try {
-    //         $entity = $this->updateUseCase->execute($id, $data);
-    //         return response()->json($entity->toArray());
-    //     } catch (\RuntimeException $e) {
-    //         return response()->json(['message' => $e->getMessage()], 404);
-    //     }
-    // }
-
     public function destroy(int $id): JsonResponse
     {
         try {
             $this->deleteUseCase->execute($id);
             return response()->json(null, 204);
+        } catch (\RuntimeException $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
+    public function changeVehicle(int $id, Request $request): JsonResponse
+    {
+        $data = ChangeVehicleRouteData::fromRequest($request);
+        
+        try {
+            $entity = $this->change_vehicle_route_use_case->execute($id, $data);
+            return response()->json($entity->toArray(), 201);
         } catch (\RuntimeException $e) {
             return response()->json(['message' => $e->getMessage()], 404);
         }

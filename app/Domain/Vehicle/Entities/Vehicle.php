@@ -64,6 +64,9 @@ class Vehicle
     public function getUpdatedAt(): ?DateTimeImmutable { return $this->updatedAt; }
     public function getDeletedAt(): ?DateTimeImmutable { return $this->deletedAt; }
     public function getProvider(): ?Provider { return $this->provider; }
+    public function isActive(): bool { return $this->status === VehicleStatus::ACTIVE; }
+    public function isInactive(): bool { return $this->status === VehicleStatus::INACTIVE; }
+    public function isMaintenance(): bool { return $this->status === VehicleStatus::MAINTENANCE; }
 
     public function setId(int $id): self
     {
