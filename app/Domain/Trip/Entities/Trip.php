@@ -112,6 +112,12 @@ class Trip
         return $this;
     }
 
+    public function setVehicleId(int $fk_vehicle): self
+    {
+        $this->fk_vehicle = $fk_vehicle;
+        return $this;
+    }
+
     public function toArray(): array
     {
         return [

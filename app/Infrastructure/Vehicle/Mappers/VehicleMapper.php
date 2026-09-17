@@ -16,7 +16,7 @@ class VehicleMapper
             $model->load('provider');
         }
 
-        $status = VehicleStatus::tryFrom($model->status) ?? VehicleStatus::ACTIVE;
+        $status = VehicleStatus::tryFrom($model->status) ?? VehicleStatus::INACTIVE;
 
         $entity = new Vehicle(
             brand: $model->brand,

@@ -30,7 +30,7 @@ class Vehicle
         int $capacity,
         int $fk_provider,
         ?string $photo = null,
-        VehicleStatus $status = VehicleStatus::ACTIVE,
+        VehicleStatus $status = VehicleStatus::INACTIVE,
         ?int $id = null)
     {
         $this->id = $id;

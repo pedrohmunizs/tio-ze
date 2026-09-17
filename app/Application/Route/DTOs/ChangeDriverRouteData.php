@@ -27,7 +27,7 @@ class ChangeDriverRouteData
     public static function rules(): array
     {
         return [
-            'fk_driver' => 'required|exists:vehicles,id',
+            'fk_driver' => 'required|exists:drivers,id',
         ];
     }
 
